@@ -111,11 +111,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: "5%",
   },
-  imageView: {},
+  imageView: {
+    borderRadius: 16,
+  },
   image: {
     resizeMode: "cover",
     width: "100%",
-    backgroundColor: "red",
+    borderTopRightRadius: 16,
+    borderTopLeftRadius: 16,
   },
   title: {
     fontSize: 24,
