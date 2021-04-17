@@ -6,7 +6,7 @@ import { auth } from "../../firebase";
 
 import CustomButton from '../../components/CustomButton';
 
-export default function App() {
+export default function App({ navigation, ...props }) {
   const [showWarning, toggleWarning] = useState(false);
   const [warningText, setWarningText] = useState('');
   const [username, setUsername] = useState('');
