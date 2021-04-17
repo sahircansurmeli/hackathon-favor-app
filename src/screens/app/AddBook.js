@@ -11,7 +11,6 @@ import {
   Keyboard,
   Button,
   Alert,
-  Platform,
   Image
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
@@ -134,6 +133,9 @@ const AddBook = ({ navigation }) => {
               value={points}
               keyboardType="numeric"
             ></TextInput>
+            <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
+            <Button title="Take a photo from the camera" onPress={pickImageCamera} />
+            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </View>
           <View style={styles.buttonView}>
             <CustomButton
@@ -148,24 +150,7 @@ const AddBook = ({ navigation }) => {
               text="Cancel"
               onPress={() => navigation.goBack()}
             />
-                      <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
-        <Button title="Take a photo from the camera" onPress={pickImageCamera} />
-        {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </View>
-      <View style={styles.buttonView}>
-        <CustomButton
-          color="#56ccf2"
-          style={styles.button}
-          text="Post"
-          onPress={alertButton}
-        />
-        <CustomButton
-          color="#bdbdbd"
-          style={styles.button}
-          text="Cancel"
-          onPress={() => navigation.goBack()}
-        />
-      </View>
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

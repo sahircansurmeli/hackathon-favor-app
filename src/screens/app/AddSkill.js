@@ -11,8 +11,7 @@ import {
   Keyboard,
   Alert,
   Button,
-  Image,
-  Platform,
+  Image
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 
@@ -111,7 +110,7 @@ const AddSkill = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
           <View style={styles.headerView}>
             <BackArrowIcon onPress={() => navigation.goBack()} />
-            <Text style={styles.header}>Add New Book</Text>
+            <Text style={styles.header}>Add New Skill</Text>
           </View>
           <View style={styles.inputView}>
             <TextInput
@@ -133,6 +132,9 @@ const AddSkill = ({ navigation }) => {
               value={points}
               keyboardType="numeric"
             ></TextInput>
+            <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
+            <Button title="Take a photo from the camera" onPress={pickImageCamera} />
+            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </View>
           <View style={styles.buttonView}>
             <CustomButton
@@ -147,24 +149,7 @@ const AddSkill = ({ navigation }) => {
               text="Cancel"
               onPress={() => navigation.goBack()}
             />
-                  <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
-        <Button title="Take a photo from the camera" onPress={pickImageCamera} />
-        {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-      </View>
-      <View style={styles.buttonView}>
-        <CustomButton
-          color="#56ccf2"
-          style={styles.button}
-          text="Post"
-          onPress={alertButton}
-        />
-        <CustomButton
-          color="#bdbdbd"
-          style={styles.button}
-          text="Cancel"
-          onPress={() => navigation.goBack()}
-        />
-      </View>
+          </View>
 
         </SafeAreaView>
       </TouchableWithoutFeedback>
