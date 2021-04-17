@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
 import DetailModal from '../../components/DetailModal';
 import { firebase } from "../../firebase";
+import { useNavigation } from '@react-navigation/native';
 
 import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
@@ -23,6 +24,7 @@ const Card = ({ title }) => {
 }
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
   const [books, setBooks] = React.useState([]);
   const [skills, setSkills] = React.useState([]);
 
@@ -44,7 +46,9 @@ export default function HomeScreen() {
       <View style={styles.headerView}>
         <ProfileIcon onPress={() => console.log("Profile")} />
         <Text style={styles.header}>EXCHANGE</Text>
-        <LeaderboardIcon onPress={() => console.log("Leaderboard")} />
+        <TouchableOpacity onPress={() => navigation.navigate("Leaderboard")}>
+          <LeaderboardIcon />
+        </TouchableOpacity>
       </View>
       <View style={styles.bodyView}>
         <View style={styles.section}>
@@ -83,7 +87,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
-    paddingHorizontal: "3%",
+    paddingHorizontal: "3%"
   },
   bodyView: {
     flex: 9,
