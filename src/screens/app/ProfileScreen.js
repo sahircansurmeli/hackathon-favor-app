@@ -1,25 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  Image,
+  Button,
+} from "react-native";
 import { firebase } from "../../firebase";
 
 import ShadowTab from "../../components/ShadowTab";
 import BackArrow from "../../components/icons/BackArrow";
 
-
 const ProfileScreen = ({ navigation }) => {
-  const [name, setName] = useState('Loading');
+  const [name, setName] = useState("Loading");
   const [points, setPoints] = useState(0);
 
   const grabUser = async () => {
     const uid = firebase.auth()?.currentUser?.uid;
     if (uid) {
-      const user = await firebase.firestore().collection("users").doc(uid).get();
-      setName(user.data().name)
-      setPoints(user.data().points)
+      const user = await firebase
+        .firestore()
+        .collection("users")
+        .doc(uid)
+        .get();
+      setName(user.data().name);
+      setPoints(user.data().points);
     }
-  }
+  };
 
-  useEffect(() => { grabUser(); }, []);
+  useEffect(() => {
+    grabUser();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,7 +43,10 @@ const ProfileScreen = ({ navigation }) => {
       </View>
       <View style={styles.userView}>
         <View style={styles.pictureView}>
-          <Image source={require('../../../assets/profile-pic.png')} style={styles.profilePic} />
+          <Image
+            source={require("../../../assets/profile-pic.png")}
+            style={styles.profilePic}
+          />
         </View>
         <View style={styles.nameView}>
           <Text style={styles.name}>{name}</Text>
@@ -43,15 +58,16 @@ const ProfileScreen = ({ navigation }) => {
         <ShadowTab text="Upcoming Exchanges" />
         <ShadowTab text="Previous Exchanges" />
       </View>
+      <Button title="Sign out" onPress={() => firebase.auth().signOut()} />
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#FDFDFD"
+    backgroundColor: "#FDFDFD",
   },
   headerView: {
     flex: 1,
@@ -71,21 +87,21 @@ const styles = StyleSheet.create({
   pictureView: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   nameView: {
     flex: 2,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
     // backgroundColor: "yellow"
   },
   contentView: {
     flex: 10,
-    paddingTop: "10%"
+    paddingTop: "10%",
   },
   title: {
     fontFamily: "MontserratSemiBold",
-    fontSize: 28
+    fontSize: 28,
   },
   profilePic: {
     width: 96,
@@ -93,13 +109,13 @@ const styles = StyleSheet.create({
   },
   name: {
     fontFamily: "MontserratBold",
-    fontSize: 24
+    fontSize: 24,
   },
   points: {
     fontSize: 18,
-    color: "#0001FC"
+    color: "#0001FC",
     // alignSelf: "flex-start"
-  }
+  },
 });
 
 export default ProfileScreen;
