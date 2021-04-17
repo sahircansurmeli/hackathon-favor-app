@@ -1,16 +1,23 @@
 import React from "react";
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Dimensions } from 'react-native';
-
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from "react-native";
 
 const ShadowTab = (props) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={props.onPress}>
         <Text style={styles.text}>{props.text}</Text>
       </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -22,7 +29,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 6,
     shadowOffset: {
       height: 8,
-      width: 10
+      width: 10,
     },
     elevation: 1,
     justifyContent: "center",
@@ -33,7 +40,6 @@ const styles = StyleSheet.create({
     // box-shadow: 0px 8px 40px 0px #0000000A;
   },
   button: {
-
     justifyContent: "center",
     width: "100%",
     height: "100%",
@@ -42,7 +48,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "MontserratSemiBold",
     fontSize: 18,
-  }
+  },
 });
 
 export default ShadowTab;
