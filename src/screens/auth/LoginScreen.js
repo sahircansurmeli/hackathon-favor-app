@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, SafeAreaView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { LinearGradient } from 'expo-linear-gradient';
-import { auth } from "../../firebase";
+import { firebase } from "../../firebase";
 
 import CustomButton from '../../components/CustomButton';
 
@@ -26,7 +26,7 @@ const Login = ({ navigation }) => {
   }
 
   const signIn = () => {
-    auth.signInWithEmailAndPassword(email, password)
+    firebase.auth().signInWithEmailAndPassword(email, password)
       .catch((error) => {
         if (error.code === 'auth/wrong-password') {
           setWarningText(warningTexts.wrongPassword);
@@ -43,10 +43,10 @@ const Login = ({ navigation }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         {/* rgba(0, 28, 81, 1)', 'rgba(32, 135 , 242, 1) */}
-        <LinearGradient colors={['#A40DE9', '#1536F1']} style={{ flex: 1 }}>
+        <LinearGradient colors={['#165595', '#5DBDCD']} style={{ flex: 1 }}>
           <SafeAreaView style={styles.container}>
             <View style={styles.headerView}>
-              <Text style={styles.title}>DIVERSIFY</Text>
+              <Text style={styles.title}>FAVORR</Text>
             </View>
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.inputView}>
               <TextInput
@@ -83,7 +83,7 @@ const Login = ({ navigation }) => {
               {showWarning ? (<Text style={styles.warning}>{warningText}</Text>) : null}
             </KeyboardAvoidingView>
             <View style={styles.lowerView}>
-              <CustomButton color="rgb(100, 90, 255)" text="SIGN IN" onPress={signIn} />
+              <CustomButton color="rgba(100, 90, 255, 0.69)" text="SIGN IN" onPress={signIn} />
               <View style={styles.altView}>
                 <TouchableOpacity>
                   <Text style={styles.altButton}>FORGOT{"\n"}DETAILS?</Text>

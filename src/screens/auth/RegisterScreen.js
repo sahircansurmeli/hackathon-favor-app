@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, SafeAreaView, KeyboardAvoidingView, Text, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { LinearGradient } from 'expo-linear-gradient';
-import { auth } from "../../firebase";
+import { firebase } from "../../firebase";
 
 import CustomButton from '../../components/CustomButton';
 
@@ -31,7 +31,7 @@ export default function App({ navigation, ...props }) {
   }
 
   const updateDisplayName = () => {
-    Firebase.auth().currentUser.updateProfile({
+    firebase.auth().currentUser.updateProfile({
       displayName: username
     }).then(() => {
       console.log("display name added");
@@ -49,7 +49,7 @@ export default function App({ navigation, ...props }) {
       toggleWarning(true);
       setWarningText(warningTexts.passwordsDontMatch);
     } else {
-      auth.createUserWithEmailAndPassword(email, password)
+      firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
           updateDisplayName();
         })
@@ -70,14 +70,14 @@ export default function App({ navigation, ...props }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <LinearGradient colors={['#A40DE9', '#1536F1']} style={{ flex: 1 }}>
+        <LinearGradient colors={['#165595', '#5DBDCD']} style={{ flex: 1 }}>
           <SafeAreaView style={styles.container}>
             <KeyboardAvoidingView
               behavior="padding"
               style={{ flex: 3 }}
               keyboardVerticalOffset={40}>
               <View style={styles.headerView}>
-                <Text style={styles.title}>DIVERSIFY</Text>
+                <Text style={styles.title}>FAVORR</Text>
               </View>
               <View style={styles.inputView}>
                 <TextInput
@@ -145,7 +145,7 @@ export default function App({ navigation, ...props }) {
               </View>
             </KeyboardAvoidingView>
             <View style={styles.lowerView}>
-              <CustomButton color="rgb(100, 90, 255)" text="REGISTER" onPress={register} />
+              <CustomButton color="rgba(100, 90, 255, 0.69)" text="REGISTER" onPress={register} />
               <View style={styles.altView}>
                 <TouchableOpacity onPress={routeToLogin}>
                   <Text style={styles.altButton}>Already have an account? <Text style={{ ...styles.altButton, textDecorationLine: "underline" }}>Sign in</Text></Text>
