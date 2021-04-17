@@ -39,18 +39,18 @@ export default function HomeScreen({ navigation }) {
   const [skills, setSkills] = useState([]);
 
 
-/*
-  book : {
-    datils,
-    picture,
-    points
-    title
-    user: {
-      name: 
-      points:
+  /*
+    book : {
+      datils,
+      picture,
+      points
+      title
+      user: {
+        name: 
+        points:
+      }
     }
-  }
-*/
+  */
 
   const extractUsername = async (userCollection) => {
     const user = await userCollection.get();
@@ -60,14 +60,14 @@ export default function HomeScreen({ navigation }) {
 
   const getBooks = () => {
     firebase.firestore().collection("books").get()
-    .then((snapshot) => {
-      const tempBooks = snapshot.docs.map(async (doc) => {
-        const username = await extractUsername(doc.data().user);
-        return { id: doc.id, name: username, ...doc.data() };
-      });
-      Promise.all(tempBooks).then((values) => setBooks(values));
-    })
-    .catch((err) => console.log("Error retrieving books", err));
+      .then((snapshot) => {
+        const tempBooks = snapshot.docs.map(async (doc) => {
+          const username = await extractUsername(doc.data().user);
+          return { id: doc.id, name: username, ...doc.data() };
+        });
+        Promise.all(tempBooks).then((values) => setBooks(values));
+      })
+      .catch((err) => console.log("Error retrieving books", err));
   }
 
   const getSkills = () => {
@@ -84,7 +84,7 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     getBooks();
-    getSkills();    
+    getSkills();
   }, []);
 
   const renderCard = ({ item }) => (
@@ -104,9 +104,8 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.subtitle}>BOOKS</Text>
-            <AddIcon />
+            <AddIcon onPress={() => navigation.navigate('AddBook')} />
           </View>
-          <Button title="Add Book" onPress={() => navigation.navigate('AddBook', { name: 'Jane' })} />
         </View>
         <View style={styles.cards}>
           <FlatList data={books} renderItem={renderCard} keyExtractor={item => item.id} horizontal />
@@ -114,9 +113,8 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.subtitle}>SKILLS</Text>
-            <AddIcon />
+            <AddIcon onPress={() => navigation.navigate('AddSkill')} />
           </View>
-          <Button title="Add Skill" onPress={() => navigation.navigate('AddSkill', { name: 'Jane' })} />
         </View>
         <View style={styles.cards}>
           <FlatList data={skills} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
