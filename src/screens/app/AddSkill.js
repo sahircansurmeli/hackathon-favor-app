@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,22 +6,85 @@ import {
   SafeAreaView,
   TextInput,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 
-const AddSkill = ({ navigation, route }) => {
+import { firebase } from "../../firebase";
+import CustomButton from "../../components/CustomButton";
+import BackArrow from "../../components/icons/BackArrow";
+
+const AddSkill = ({ navigation }) => {
+  const [title, setTitle] = useState("");
+  const [details, setDetails] = useState("");
+  const [points, setPoints] = useState("");
+
+  const Post = () => {
+    firebase
+      .firestore()
+      .collection("skills")
+      .add({
+        title: title,
+        details: details,
+        points: Number(points),
+        picture: "craking.jpg",
+        user: firebase
+          .firestore()
+          .doc("users/" + firebase.auth().currentUser.uid),
+      })
+      .then(() => {
+        console.log("Skill added!");
+      });
+  };
+
+  const alertButton = () =>
+    Alert.alert("Confirmation", "Are you sure?", [
+      {
+        text: "Cancel",
+      },
+      { text: "OK", onPress: () => Post() },
+    ]);
+
   return (
     <SafeAreaView style={styles.container}>
-        <View style={styles.headerView}>
-          <Text style={styles.header}>Add New Book</Text>
-        </View>
-        <View style={styles.inputView}>
-          <TextInput style={styles.inputBox} placeholder="Title.."></TextInput>
-          <TextInput
-            style={styles.inputBox}
-            placeholder="Details.."
-          ></TextInput>
-          <TextInput style={styles.inputBox} placeholder="Points.."></TextInput>
-        </View>
+      <View style={styles.headerView}>
+        <BackArrow onPress={() => navigation.goBack()} />
+        <Text style={styles.header}>Add New Book</Text>
+      </View>
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.inputBox}
+          placeholder="Title.."
+          onChangeText={setTitle}
+          value={title}
+        ></TextInput>
+        <TextInput
+          style={styles.inputBox}
+          placeholder="Details.."
+          onChangeText={setDetails}
+          value={details}
+        ></TextInput>
+        <TextInput
+          style={styles.inputBox}
+          placeholder="Points.."
+          onChangeText={setPoints}
+          value={points}
+          keyboardType="numeric"
+        ></TextInput>
+      </View>
+      <View style={styles.buttonView}>
+        <CustomButton
+          color="#56ccf2"
+          style={styles.button}
+          text="Post"
+          onPress={alertButton}
+        />
+        <CustomButton
+          color="#bdbdbd"
+          style={styles.button}
+          text="Cancel"
+          onPress={() => navigation.goBack()}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -34,7 +97,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
   headerView: {
-    flex: 1,
+    flex: 2,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
@@ -68,6 +131,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 10,
     padding: 20,
+  },
+  buttonView: {
+    flexDirection: "row",
+    margin: "3%",
+    justifyContent: "center",
+  },
+  button: {
+    marginHorizontal: "3%",
+    marginBottom: "5%",
   },
 });
 

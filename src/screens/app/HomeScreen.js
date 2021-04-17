@@ -59,6 +59,7 @@ export default function HomeScreen({ navigation }) {
       .catch((err) => console.log("Error retrieving books", err));
   }
 
+
   const getSkills = () => {
     firebase
       .firestore()
@@ -80,7 +81,7 @@ export default function HomeScreen({ navigation }) {
     const points = data.data().points;
     setPoints(points);
   }
-
+  
   useEffect(() => {
     getBooks();
     getSkills();
@@ -113,7 +114,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.subtitle}>BOOKS</Text>
-            <AddIcon onPress={() => navigation.navigate('AddBook')} />
+            <AddIcon onPress={() => navigation.navigate("AddBook")} />
           </View>
         </View>
         <View style={styles.cards}>
