@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, SafeAreaView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { LinearGradient } from 'expo-linear-gradient';
-import { auth } from "../../firebase";
+import { firebase } from "../../firebase";
 
 import CustomButton from '../../components/CustomButton';
 
@@ -26,7 +26,7 @@ const Login = ({ navigation }) => {
   }
 
   const signIn = () => {
-    auth.signInWithEmailAndPassword(email, password)
+    firebase.auth().signInWithEmailAndPassword(email, password)
       .catch((error) => {
         if (error.code === 'auth/wrong-password') {
           setWarningText(warningTexts.wrongPassword);

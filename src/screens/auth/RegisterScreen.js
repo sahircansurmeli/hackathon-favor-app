@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, SafeAreaView, KeyboardAvoidingView, Text, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { LinearGradient } from 'expo-linear-gradient';
-import { auth } from "../../firebase";
+import { firebase } from "../../firebase";
 
 import CustomButton from '../../components/CustomButton';
 
@@ -31,7 +31,7 @@ export default function App({ navigation, ...props }) {
   }
 
   const updateDisplayName = () => {
-    Firebase.auth().currentUser.updateProfile({
+    firebase.auth().currentUser.updateProfile({
       displayName: username
     }).then(() => {
       console.log("display name added");
@@ -49,7 +49,7 @@ export default function App({ navigation, ...props }) {
       toggleWarning(true);
       setWarningText(warningTexts.passwordsDontMatch);
     } else {
-      auth.createUserWithEmailAndPassword(email, password)
+      firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
           updateDisplayName();
         })

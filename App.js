@@ -2,14 +2,14 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AppLoading from "expo-app-loading";
 import { useFonts } from 'expo-font';
-import { auth } from "./src/firebase";
+import { firebase } from "./src/firebase";
 
 import AuthContainer from "./src/screens/auth";
 import AppContainer from "./src/screens/app";
 
 export default function App() {
   const [authenticatedUser, setAuthenticatedUser] = React.useState(false);
-  auth.onAuthStateChanged(setAuthenticatedUser);
+  firebase.auth().onAuthStateChanged(setAuthenticatedUser);
 
   let [loaded] = useFonts({
     Montserrat: require('./assets/fonts/Montserrat-Regular.ttf'),
