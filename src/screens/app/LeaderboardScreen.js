@@ -6,12 +6,14 @@ import {
   SafeAreaView,
   FlatList,
   useWindowDimensions,
+  TouchableOpacity,
 } from "react-native";
 import { firebase } from "../../firebase";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 
 import BackArrowIcon from "../../components/icons/BackArrowIcon";
 import SearchIcon from "../../components/icons/SearchIcon";
+import { useNavigation } from "@react-navigation/core";
 
 function leaderboardItem({ item }) {
   return (
@@ -106,6 +108,7 @@ const tabBar = StyleSheet.create({
 
 export default function LeaderboardScreen() {
   const layout = useWindowDimensions();
+  const navigator = useNavigation();
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
@@ -118,7 +121,9 @@ export default function LeaderboardScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
-        <BackArrowIcon onPress={() => console.log("Back arrow")} />
+        <TouchableOpacity onPress={() => navigator.goBack()}>
+          <BackArrowIcon />
+        </TouchableOpacity>
         <Text style={styles.header}>LEADERBOARD</Text>
         <SearchIcon onPress={() => console.log("Leaderboard")} />
       </View>
