@@ -3,23 +3,15 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   SafeAreaView,
   FlatList,
-  TouchableOpacity,
+  useWindowDimensions,
 } from "react-native";
-import DetailModal from "../../components/DetailModal";
 import { firebase } from "../../firebase";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 
 import BackArrowIcon from "../../components/icons/BackArrowIcon";
 import SearchIcon from "../../components/icons/SearchIcon";
-
-const MOCK_LEADERBOARD = [
-  { id: 1, name: "Snoop Dog", points: 15 },
-  { id: 2, name: "Enes", points: 25 },
-  { id: 3, name: "Michael Jackson", points: 35 },
-  { id: 4, name: "Kaan", points: 45 },
-];
 
 function leaderboardItem({ item }) {
   return (
@@ -52,7 +44,7 @@ const leaderboardStyles = StyleSheet.create({
   },
 });
 
-export default function LeaderboardScreen() {
+function LeaderboardList() {
   const [users, setUsers] = React.useState([]);
 
   React.useEffect(() => {
@@ -73,6 +65,57 @@ export default function LeaderboardScreen() {
   }, []);
 
   return (
+    <FlatList
+      data={users}
+      renderItem={leaderboardItem}
+      keyExtractor={(item) => item.id}
+    />
+  );
+}
+
+const renderScene = SceneMap({
+  year: LeaderboardList,
+  month: LeaderboardList,
+  week: LeaderboardList,
+  day: LeaderboardList,
+});
+
+const renderTabBar = (props) => (
+  <TabBar
+    {...props}
+    indicatorStyle={tabBar.indicator}
+    style={tabBar.main}
+    renderLabel={({ route }) => <Text style={tabBar.text}>{route.title}</Text>}
+  />
+);
+
+const tabBar = StyleSheet.create({
+  main: {
+    color: "#57B3C8",
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#aaa",
+  },
+  text: {
+    color: "#57B3C8",
+  },
+  indicator: {
+    backgroundColor: "#57B3C8",
+  },
+});
+
+export default function LeaderboardScreen() {
+  const layout = useWindowDimensions();
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: "year", title: "YEAR" },
+    { key: "month", title: "MONTH" },
+    { key: "week", title: "WEEK" },
+    { key: "day", title: "DAY" },
+  ]);
+
+  return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
         <BackArrowIcon onPress={() => console.log("Back arrow")} />
@@ -80,10 +123,12 @@ export default function LeaderboardScreen() {
         <SearchIcon onPress={() => console.log("Leaderboard")} />
       </View>
       <View style={styles.bodyView}>
-        <FlatList
-          data={users}
-          renderItem={leaderboardItem}
-          keyExtractor={(item) => item.id}
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: layout.width }}
+          renderTabBar={renderTabBar}
         />
       </View>
     </SafeAreaView>
@@ -107,7 +152,6 @@ const styles = StyleSheet.create({
   },
   bodyView: {
     flex: 9,
-    marginTop: "10%",
     width: "100%",
     justifyContent: "center",
   },
@@ -133,8 +177,6 @@ const styles = StyleSheet.create({
   },
   cards: {
     width: "88%",
-    // paddingHorizontal: 3
-    // backgroundColor: "yellow"
   },
   card: {
     backgroundColor: "#FFF",
@@ -145,8 +187,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     justifyContent: "center",
     alignItems: "center",
-  },
-  list: {
-    // backgroundColor: "red"
   },
 });
