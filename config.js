@@ -1,0 +1,18 @@
+import * as firebase from 'firebase';
+import '@firebase/auth';
+import '@firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDJbKrPi5f7oDVaiehefbX2Jp73CKjeyCg",
+  authDomain: "patriothacks-21.firebaseapp.com",
+  projectId: "patriothacks-21",
+  storageBucket: "patriothacks-21.appspot.com",
+  messagingSenderId: "789626821070",
+  appId: "1:789626821070:web:46a41d1d919a897102739f"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+export { firebase };
