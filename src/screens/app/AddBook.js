@@ -6,13 +6,14 @@ import {
   SafeAreaView,
   TextInput,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 
 import { firebase } from "../../firebase";
 import CustomButton from "../../components/CustomButton";
-import BackArrowIcon from "../../components/icons/BackArrowIcon";
+import BackArrow from "../../components/icons/BackArrow";
 
-const AddBook = ({ navigation, route }) => {
+const AddBook = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
   const [points, setPoints] = useState("");
@@ -24,19 +25,27 @@ const AddBook = ({ navigation, route }) => {
       .add({
         title: title,
         details: details,
-        points: points,
+        points: Number(points),
         picture: "KR.jpg",
-        user: firebase.auth().currentUser,
+        user: `users/${firebase.auth().currentUser.uid}`,
       })
       .then(() => {
-        console.log("User added!");
+        console.log("Book added!");
       });
   };
+
+  const alertButton = () =>
+    Alert.alert("Confirmation", "Are you sure?", [
+      {
+        text: "Cancel",
+      },
+      { text: "OK", onPress: () => Post() },
+    ]);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
-        <BackArrowIcon onPress={() => navigation.goBack()} />
+        <BackArrow onPress={() => navigation.goBack()} />
         <Text style={styles.header}>Add New Book</Text>
       </View>
       <View style={styles.inputView}>
@@ -57,6 +66,7 @@ const AddBook = ({ navigation, route }) => {
           placeholder="Points.."
           onChangeText={setPoints}
           value={points}
+          keyboardType="numeric"
         ></TextInput>
       </View>
       <View style={styles.buttonView}>
@@ -64,9 +74,14 @@ const AddBook = ({ navigation, route }) => {
           color="#56ccf2"
           style={styles.button}
           text="Post"
-          onPress={Post}
+          onPress={alertButton}
         />
-        <CustomButton color="#bdbdbd" style={styles.button} text="Cancel" />
+        <CustomButton
+          color="#bdbdbd"
+          style={styles.button}
+          text="Cancel"
+          onPress={() => navigation.goBack()}
+        />
       </View>
     </SafeAreaView>
   );
