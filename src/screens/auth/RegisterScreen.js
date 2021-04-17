@@ -70,14 +70,14 @@ export default function App({ navigation, ...props }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <LinearGradient colors={['#A40DE9', '#1536F1']} style={{ flex: 1 }}>
+        <LinearGradient colors={['#165595', '#5DBDCD']} style={{ flex: 1 }}>
           <SafeAreaView style={styles.container}>
             <KeyboardAvoidingView
               behavior="padding"
               style={{ flex: 3 }}
               keyboardVerticalOffset={40}>
               <View style={styles.headerView}>
-                <Text style={styles.title}>DIVERSIFY</Text>
+                <Text style={styles.title}>FAVORR</Text>
               </View>
               <View style={styles.inputView}>
                 <TextInput
@@ -145,7 +145,7 @@ export default function App({ navigation, ...props }) {
               </View>
             </KeyboardAvoidingView>
             <View style={styles.lowerView}>
-              <CustomButton color="rgb(100, 90, 255)" text="REGISTER" onPress={register} />
+              <CustomButton color="rgba(100, 90, 255, 0.69)" text="REGISTER" onPress={register} />
               <View style={styles.altView}>
                 <TouchableOpacity onPress={routeToLogin}>
                   <Text style={styles.altButton}>Already have an account? <Text style={{ ...styles.altButton, textDecorationLine: "underline" }}>Sign in</Text></Text>
