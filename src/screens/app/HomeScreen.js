@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
 import DetailModal from '../../components/DetailModal';
 import { firebase } from "../../firebase";
+import { useNavigation } from '@react-navigation/native';
 
 import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
@@ -50,7 +51,9 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.headerView}>
         <ProfileIcon onPress={() => navigation.navigate("Profile")} />
         <Text style={styles.header}>EXCHANGE</Text>
-        <LeaderboardIcon onPress={() => console.log("Leaderboard")} />
+        <TouchableOpacity onPress={() => navigation.navigate("Leaderboard")}>
+          <LeaderboardIcon />
+        </TouchableOpacity>
       </View>
       <View style={styles.bodyView}>
         <View style={styles.section}>
@@ -93,7 +96,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
-    paddingHorizontal: "3%",
+    paddingHorizontal: "3%"
   },
   bodyView: {
     flex: 9,
