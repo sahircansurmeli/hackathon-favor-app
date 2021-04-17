@@ -10,10 +10,21 @@ const Card = ({ title }) => {
     <View style={styles.card}>
       <Text>{title}</Text>
     </View>
-  )
+  );
 }
 
-export default function App() {
+export default function HomeScreen() {
+  const [books, setBooks] = React.useState([]);
+  const [skills, setSkills] = React.useState([]);
+
+  React.useEffect(() => {
+    firebase.firestore().collection("books").get()
+      .then((snapshot) => setBooks(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))))
+      .catch((err) => console.log("Error retrieving books", err));
+    firebase.firestore().collection("skills").get()
+      .then((snapshot) => setSkills(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))))
+      .catch((err) => console.log("Error retrieving skills", err));
+  }, []);
 
   const renderCard = ({ item }) => (
     <Card title={item.title} />
@@ -31,7 +42,7 @@ export default function App() {
           </View>
         </View>
         <View style={styles.cards}>
-          <FlatList data={MOCK_BOOKS} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
+          <FlatList data={books} renderItem={renderCard} keyExtractor={item => item.id} horizontal />
         </View>
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -39,7 +50,7 @@ export default function App() {
           </View>
         </View>
         <View style={styles.cards}>
-          <FlatList data={MOCK_SKILLS} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
+          <FlatList data={skills} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
         </View>
 
         <Button title="Sign out" onPress={() => firebase.auth().signOut()} />
