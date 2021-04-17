@@ -12,8 +12,8 @@ const DetailModal = (props) => {
                         <Image source={require('../../assets/skateboard.jpeg')} style={styles.image} />
                     </View>
                     <View style={styles.titleView}>
-                        <Text style={styles.title}>Skateboarding Class</Text>
-                        <Text style={styles.definition}>Learn skateboarding from a fellow Mason student</Text>
+                        <Text style={styles.title}>{props.title} Class</Text>
+                        <Text style={styles.definition}>Learn {props.title} from a fellow Mason student</Text>
                         <Text style={styles.points}>10 PTS</Text>
                     </View>
                     <View style={styles.buttonView}>
