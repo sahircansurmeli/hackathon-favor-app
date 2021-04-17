@@ -11,8 +11,7 @@ import {
   Keyboard,
   Alert,
   Button,
-  Image,
-  Platform,
+  Image
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 
@@ -74,6 +73,51 @@ const AddSkill = ({ navigation }) => {
     }
   }
 
+  const uriToBlob = (uri) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        // return the blob
+        resolve(xhr.response);
+      };
+
+      xhr.onerror = function () {
+        // something went wrong
+        reject(new Error('uriToBlob failed'));
+      };
+      // this helps us get a blob
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+
+      xhr.send(null);
+    });
+  }
+
+  const uploadToFirebase = (blob, id) => {
+    return new Promise((resolve, reject) => {
+      var storageRef = firebase.storage().ref();
+      storageRef.child(`${id}.jpg`).put(blob, {
+        contentType: 'image/jpeg'
+      }).then((snapshot) => {
+        blob.close();
+        resolve(snapshot);
+      }).catch((error) => {
+        reject(error);
+      });
+    });
+  }
+
+  const uploadImg = async (id) => {
+    try {
+      const blob = await uriToBlob(image);
+      const snapshot = await uploadToFirebase(blob, id);
+      return snapshot;
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
   const Post = async () => {
     firebase
       .firestore()
@@ -82,10 +126,12 @@ const AddSkill = ({ navigation }) => {
         title: title,
         details: details,
         points: Number(points),
-        picture: "cracking.jpg",
         user: firebase
           .firestore()
           .doc("users/" + firebase.auth().currentUser.uid),
+      })
+      .then((doc) => {
+        return uploadImg(doc.id);
       })
       .then(() => {
         console.log("Skill added!");
@@ -111,7 +157,7 @@ const AddSkill = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
           <View style={styles.headerView}>
             <BackArrowIcon onPress={() => navigation.goBack()} />
-            <Text style={styles.header}>Add New Book</Text>
+            <Text style={styles.header}>Add New Skill</Text>
           </View>
           <View style={styles.inputView}>
             <TextInput
@@ -133,6 +179,9 @@ const AddSkill = ({ navigation }) => {
               value={points}
               keyboardType="numeric"
             ></TextInput>
+            <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
+            <Button title="Take a photo from the camera" onPress={pickImageCamera} />
+            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </View>
           <View style={styles.buttonView}>
             <CustomButton
@@ -147,24 +196,7 @@ const AddSkill = ({ navigation }) => {
               text="Cancel"
               onPress={() => navigation.goBack()}
             />
-                  <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
-        <Button title="Take a photo from the camera" onPress={pickImageCamera} />
-        {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-      </View>
-      <View style={styles.buttonView}>
-        <CustomButton
-          color="#56ccf2"
-          style={styles.button}
-          text="Post"
-          onPress={alertButton}
-        />
-        <CustomButton
-          color="#bdbdbd"
-          style={styles.button}
-          text="Cancel"
-          onPress={() => navigation.goBack()}
-        />
-      </View>
+          </View>
 
         </SafeAreaView>
       </TouchableWithoutFeedback>

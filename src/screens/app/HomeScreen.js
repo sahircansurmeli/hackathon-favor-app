@@ -3,14 +3,14 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   SafeAreaView,
   FlatList,
   TouchableOpacity,
-  Image
+  Image,
 } from "react-native";
 import DetailModal from "../../components/DetailModal";
 import { firebase } from "../../firebase";
+import { useFocusEffect } from "@react-navigation/native"
 
 import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
@@ -22,18 +22,31 @@ const Card = ({ item }) => {
   const [pictureUrl, setPictureUrl] = useState("");
 
   React.useEffect(() => {
-    firebase.storage().ref(item.picture).getDownloadURL()
-      .then(setPictureUrl);
+    firebase.storage().ref(item.id + ".jpg").getDownloadURL()
+      .then(setPictureUrl)
+      .catch((err) => {
+        if (err.code === "storage/object-not-found") {
+          setPictureUrl("");
+        }
+      });
   }, [item.id]);
 
   return (
     <TouchableOpacity onPress={() => showModal(true)}>
       <View style={styles.card}>
-        {
-          pictureUrl
-            ? <Image source={{ uri: pictureUrl }} style={{ width: "100%", height: "100%", overflow: "hidden", borderRadius: 14 }} />
-            : <Text>{item.title}</Text>
-        }
+        {pictureUrl ? (
+          <Image
+            source={{ uri: pictureUrl }}
+            style={{
+              width: "100%",
+              height: "100%",
+              overflow: "hidden",
+              borderRadius: 14,
+            }}
+          />
+        ) : (
+          <Text>{item.title}</Text>
+        )}
         <DetailModal
           visible={modal}
           item={item}
@@ -55,7 +68,10 @@ export default function HomeScreen({ navigation }) {
   };
 
   const getBooks = () => {
-    firebase.firestore().collection("books").get()
+    firebase
+      .firestore()
+      .collection("books")
+      .get()
       .then((snapshot) => {
         const tempBooks = snapshot.docs.map(async (doc) => {
           const username = await extractUsername(doc.data().user);
@@ -70,8 +86,7 @@ export default function HomeScreen({ navigation }) {
         Promise.all(tempBooks).then((values) => setBooks(values));
       })
       .catch((err) => console.log("Error retrieving books", err));
-  }
-
+  };
 
   const getSkills = () => {
     firebase
@@ -98,23 +113,17 @@ export default function HomeScreen({ navigation }) {
     const data = await firebase.firestore().collection("users").doc(uid).get();
     const points = data.data().points;
     setPoints(points);
-  }
+  };
 
-  useEffect(() => {
-    getBooks();
-    getSkills();
-    getPoints();
-  }, []);
-
-  const renderCard = ({ item }) => (
-    <Card
-      // title={item.title}
-      // details={item.details}
-      // points={item.points}
-      // name={item.name}
-      item={item}
-    />
+  useFocusEffect(
+    React.useCallback(() => {
+      getBooks();
+      getSkills();
+      getPoints();
+    }, [])
   );
+
+  const renderCard = ({ item }) => <Card item={item} />;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -147,7 +156,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.subtitle}>SKILLS</Text>
-            <AddIcon onPress={() => navigation.navigate('AddSkill')} />
+            <AddIcon onPress={() => navigation.navigate("AddSkill")} />
           </View>
         </View>
         <View style={styles.cards}>
@@ -158,8 +167,6 @@ export default function HomeScreen({ navigation }) {
             horizontal
           />
         </View>
-
-        <Button title="Sign out" onPress={() => firebase.auth().signOut()} />
       </View>
     </SafeAreaView>
   );
@@ -182,7 +189,7 @@ const styles = StyleSheet.create({
   },
   bodyView: {
     flex: 9,
-    marginTop: "3%"
+    marginTop: "3%",
     // backgroundColor: "#444"
   },
   section: {
@@ -233,12 +240,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginLeft: "8%",
-    marginTop: "5%"
+    marginTop: "5%",
   },
   pointText: {
     fontFamily: "MontserratMedium",
     fontSize: 20,
-    marginLeft: "5%"
+    marginLeft: "5%",
   },
   list: {
     // backgroundColor: "red"
