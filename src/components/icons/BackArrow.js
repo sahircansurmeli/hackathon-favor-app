@@ -2,13 +2,13 @@ import * as React from "react";
 import { TouchableOpacity } from "react-native"; 
 import Svg, { Path } from "react-native-svg";
 
-function AddIcon(props) {
+function BackArrow(props) {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={props.onPress}>
       <Svg
-        width={24}
-        height={24}
-        viewBox="0 0 24 24"
+        width={27}
+        height={27}
+        viewBox="0 0 27 27"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         {...props}
@@ -22,12 +22,12 @@ function AddIcon(props) {
         <Path
           fillRule="evenodd"
           clipRule="evenodd"
-          d="M13 7a1 1 0 10-2 0v4H7a1 1 0 100 2h4v4a1 1 0 102 0v-4h4a1 1 0 100-2h-4V7z"
-          fill="#fff"
+          d="M22.3341 12.0839V14.2809L8.24011 14.2809L11.8026 17.8429L10.2488 19.3964L4.03381 13.1823L10.2488 6.96808L11.8026 8.52162L8.23985 12.0839L22.3341 12.0839Z"
+          fill="#000"
         />
       </Svg>
     </TouchableOpacity>
   );
 }
 
-export default AddIcon;
+export default BackArrow;
