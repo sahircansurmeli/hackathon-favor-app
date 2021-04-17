@@ -10,14 +10,20 @@ import AddIcon from "../../components/icons/AddIcon";
 const MOCK_BOOKS = [{ id: 1, title: 'K&R' }, { id: 2, title: 'Cracking the Coding Interview' }, { id: 3, title: 'Hello' }, { id: 4, title: 'Hey' }];
 const MOCK_SKILLS = [{ id: 1, title: 'Skateboarding' }, { id: 2, title: 'Skiing' }, { id: 3, title: 'Basketball' }, { id: 4, title: 'Maths' }];
 
-const Card = ({ title }) => {
+const Card = ({ title, details, points, name }) => {
   const [modal, showModal] = useState(false);
 
   return (
     <TouchableOpacity onPress={() => showModal(true)}>
       <View style={styles.card}>
-          <Text>{title}</Text>
-        <DetailModal visible={modal} title={title} onCancel={() => showModal(false)} />
+        <Text>{title}</Text>
+        <DetailModal
+          visible={modal}
+          title={title}
+          points={points}
+          details={details}
+          name={name}
+          onCancel={() => showModal(false)} />
       </View>
     </TouchableOpacity>
   );
@@ -25,19 +31,59 @@ const Card = ({ title }) => {
 
 export default function HomeScreen({ navigation }) {
   const [books, setBooks] = useState([]);
-  const [skills, setSkills] = useState([]);
+  const [skills, setSkills] = useState([]);
+
+
+/*
+  book : {
+    datils,
+    picture,
+    points
+    title
+    user: {
+      name: 
+      points:
+    }
+  }
+*/
+
+  const extractUsername = async (userCollection) => {
+    const user = await userCollection.get();
+    const name = await user.data().name;
+    return name;
+  }
+
+  const getBooks = () => {
+    firebase.firestore().collection("books").get()
+    .then((snapshot) => {
+      const tempBooks = snapshot.docs.map(async (doc) => {
+        const username = await extractUsername(doc.data().user);
+        return { id: doc.id, name: username, ...doc.data() };
+      });
+      Promise.all(tempBooks).then((values) => setBooks(values));
+    })
+    .catch((err) => console.log("Error retrieving books", err));
+  }
+
+  const getSkills = () => {
+    firebase.firestore().collection("skills").get()
+      .then((snapshot) => {
+        const tempSkills = snapshot.docs.map(async (doc) => {
+          const username = await extractUsername(doc.data().user);
+          return { id: doc.id, name: username, ...doc.data() };
+        });
+        Promise.all(tempSkills).then((values) => setSkills(values))
+      })
+      .catch((err) => console.log("Error retrieving skills", err));
+  }
 
   useEffect(() => {
-    firebase.firestore().collection("books").get()
-      .then((snapshot) => setBooks(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))))
-      .catch((err) => console.log("Error retrieving books", err));
-    firebase.firestore().collection("skills").get()
-      .then((snapshot) => setSkills(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))))
-      .catch((err) => console.log("Error retrieving skills", err));
+    getBooks();
+    getSkills();    
   }, []);
 
   const renderCard = ({ item }) => (
-    <Card title={item.title} />
+    <Card title={item.title} details={item.details} points={item.points} name={item.name} />
   );
 
   return (
