@@ -16,14 +16,13 @@ const styles = {
   button: {
     // backgroundColor: 'rgb(100, 90, 255)',
     borderRadius: 100,
-    paddingRight: 50,
-    paddingLeft: 50,
-    padding: 15,
+    paddingHorizontal: 35,
+    paddingVertical: 15,
     alignItems: 'center'
   },
   text: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 16,
     fontFamily: 'Montserrat',
     letterSpacing: 2.78
   },

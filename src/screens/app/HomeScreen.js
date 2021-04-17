@@ -1,19 +1,39 @@
-import React from 'react';
-import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
+import DetailModal from '../../components/DetailModal';
 import { firebase } from "../../firebase";
+
+import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
+import ProfileIcon from "../../components/icons/ProfileIcon";
 
 const MOCK_BOOKS = [{ id: 1, title: 'K&R' }, { id: 2, title: 'Cracking the Coding Interview' }, { id: 3, title: 'Hello' }, { id: 4, title: 'Hey' }];
 const MOCK_SKILLS = [{ id: 1, title: 'Skateboarding' }, { id: 2, title: 'Skiing' }, { id: 3, title: 'Basketball' }, { id: 4, title: 'Maths' }];
 
 const Card = ({ title }) => {
+  const [modal, showModal] = useState(false);
+
   return (
-    <View style={styles.card}>
-      <Text>{title}</Text>
-    </View>
-  )
+    <TouchableOpacity onPress={() => showModal(true)}>
+      <View style={styles.card}>
+          <Text>{title}</Text>
+        <DetailModal visible={modal} title={title} onCancel={() => showModal(false)} />
+      </View>
+    </TouchableOpacity>
+  );
 }
 
-export default function App() {
+export default function HomeScreen() {
+  const [books, setBooks] = React.useState([]);
+  const [skills, setSkills] = React.useState([]);
+
+  React.useEffect(() => {
+    firebase.firestore().collection("books").get()
+      .then((snapshot) => setBooks(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))))
+      .catch((err) => console.log("Error retrieving books", err));
+    firebase.firestore().collection("skills").get()
+      .then((snapshot) => setSkills(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))))
+      .catch((err) => console.log("Error retrieving skills", err));
+  }, []);
 
   const renderCard = ({ item }) => (
     <Card title={item.title} />
@@ -22,7 +42,9 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
+        <ProfileIcon onPress={() => console.log("Profile")} />
         <Text style={styles.header}>EXCHANGE</Text>
+        <LeaderboardIcon onPress={() => console.log("Leaderboard")} />
       </View>
       <View style={styles.bodyView}>
         <View style={styles.section}>
@@ -31,7 +53,7 @@ export default function App() {
           </View>
         </View>
         <View style={styles.cards}>
-          <FlatList data={MOCK_BOOKS} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
+          <FlatList data={books} renderItem={renderCard} keyExtractor={item => item.id} horizontal />
         </View>
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -39,7 +61,7 @@ export default function App() {
           </View>
         </View>
         <View style={styles.cards}>
-          <FlatList data={MOCK_SKILLS} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
+          <FlatList data={skills} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
         </View>
 
         <Button title="Sign out" onPress={() => firebase.auth().signOut()} />
@@ -57,10 +79,15 @@ const styles = StyleSheet.create({
   },
   headerView: {
     flex: 1,
-    justifyContent: "center",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: "3%",
   },
   bodyView: {
     flex: 9,
+    marginTop: "10%"
     // backgroundColor: "#444"
   },
   section: {
@@ -84,7 +111,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2
   },
   cards: {
-    width: "90%",
+    width: "88%",
     // paddingHorizontal: 3
     // backgroundColor: "yellow"
   },

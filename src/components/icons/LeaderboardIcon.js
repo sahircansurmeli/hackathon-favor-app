@@ -4,9 +4,10 @@ import Svg, { Path } from "react-native-svg";
 function LeaderboardIcon(props) {
   return (
     <Svg
-      height={512}
+      height={30}
       viewBox="0 0 24 24"
-      width={512}
+      width={30}
+      fill="white"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
