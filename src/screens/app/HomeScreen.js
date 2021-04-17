@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import DetailModal from "../../components/DetailModal";
 import { firebase } from "../../firebase";
@@ -38,6 +39,10 @@ export default function HomeScreen({ navigation }) {
   const [books, setBooks] = useState([]);
   const [skills, setSkills] = useState([]);
   const [points, setPoints] = useState(0);
+  const [requestsModal, showRequestsModal] = useState(false);
+  const [latestRequest, updateLatestRequest] = useState([]);
+  const uid = firebase.auth().currentUser.uid;
+
   const extractUsername = async (userCollection) => {
     const user = await userCollection.get();
     const name = await user.data().name;
@@ -84,26 +89,39 @@ export default function HomeScreen({ navigation }) {
   };
 
   const getPoints = async () => {
-    const uid = firebase.auth().currentUser.uid;
     const data = await firebase.firestore().collection("users").doc(uid).get();
     const points = data.data().points;
     setPoints(points);
   }
-  
+
+  const followRequests = async () => {
+    const doc = await firebase.firestore().collection("users").doc(uid);
+    const observer = doc.onSnapshot((docSnapshot) => {
+      const reqsArray = docSnapshot.data().requests;
+      const req = reqsArray[0];
+      console.log(req);
+      // updateLatestRequest(reqs);
+      showRequestsModal(true);
+    }, err => {
+      console.log(`Encountered error: ${err}`);
+    })
+  }
+
+  const getLatestRequest = () => {
+    console.log(latestRequest);
+  }
+
   useEffect(() => {
     getBooks();
     getSkills();
     getPoints();
+    followRequests();
+    // getLatestRequest();
   }, []);
 
+
   const renderCard = ({ item }) => (
-    <Card
-      // title={item.title}
-      // details={item.details}
-      // points={item.points}
-      // name={item.name}
-      item={item}
-    />
+    <Card item={item} />
   );
 
   return (
@@ -150,6 +168,16 @@ export default function HomeScreen({ navigation }) {
         </View>
 
         <Button title="Sign out" onPress={() => firebase.auth().signOut()} />
+      </View>
+      <View style={styles.lowerView}>
+        <TouchableOpacity style={styles.requestsButton}>
+          <Text style={styles.requestsText}>REQUESTS</Text>
+        </TouchableOpacity>
+        {/* <DetailModal
+          visible={requestsModal}
+          item={}
+          close={() => showRequestsModal(false)}
+        /> */}
       </View>
     </SafeAreaView>
   );
@@ -229,6 +257,18 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratMedium",
     fontSize: 20,
     marginLeft: "5%"
+  },
+  lowerView: {
+    flex: 1
+  },
+  requestsButton: {
+    backgroundColor: "#FFFA",
+  },
+  requestsText: {
+    fontFamily: "Montserrat",
+    width: Dimensions.get("window").width * 0.4,
+    paddingVertical: "3%",
+    textAlign: "center"
   },
   list: {
     // backgroundColor: "red"
