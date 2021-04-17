@@ -30,11 +30,12 @@ export default function App({ navigation, ...props }) {
     navigation.navigate('Login');
   }
 
-  const updateDisplayName = () => {
+  const updateDisplayName = (userCredential) => {
     firebase.auth().currentUser.updateProfile({
       displayName: username
     }).then(() => {
       console.log("display name added");
+      return firebase.firestore().collection("users").doc(userCredential.user.uid).set({ name: username });
     }).catch((error) => {
       console.log(error);
     });
@@ -51,7 +52,7 @@ export default function App({ navigation, ...props }) {
     } else {
       firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          updateDisplayName();
+          updateDisplayName(userCredential);
         })
         .catch((error) => {
           if (error.code === "auth/invalid-email") {
