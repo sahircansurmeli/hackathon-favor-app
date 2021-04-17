@@ -4,7 +4,7 @@ import Svg, { Path } from "react-native-svg";
 
 function AddIcon(props) {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={props.onPress}>
       <Svg
         width={24}
         height={24}

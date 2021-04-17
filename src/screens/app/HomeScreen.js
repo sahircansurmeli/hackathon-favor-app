@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
 import AddIcon from "../../components/icons/AddIcon";
+import PointsIcon from "../../components/icons/PointsIcon";
 
 const Card = ({ title, details, points, name }) => {
   const [modal, showModal] = useState(false);
@@ -39,7 +40,7 @@ const Card = ({ title, details, points, name }) => {
 export default function HomeScreen({ navigation }) {
   const [books, setBooks] = useState([]);
   const [skills, setSkills] = useState([]);
-
+  const [points, setPoints] = useState(0);
   const extractUsername = async (userCollection) => {
     const user = await userCollection.get();
     const name = await user.data().name;
@@ -47,10 +48,7 @@ export default function HomeScreen({ navigation }) {
   };
 
   const getBooks = () => {
-    firebase
-      .firestore()
-      .collection("books")
-      .get()
+    firebase.firestore().collection("books").get()
       .then((snapshot) => {
         const tempBooks = snapshot.docs.map(async (doc) => {
           const username = await extractUsername(doc.data().user);
@@ -59,7 +57,7 @@ export default function HomeScreen({ navigation }) {
         Promise.all(tempBooks).then((values) => setBooks(values));
       })
       .catch((err) => console.log("Error retrieving books", err));
-  };
+  }
 
   const getSkills = () => {
     firebase
@@ -76,9 +74,17 @@ export default function HomeScreen({ navigation }) {
       .catch((err) => console.log("Error retrieving skills", err));
   };
 
+  const getPoints = async () => {
+    const uid = firebase.auth().currentUser.uid;
+    const data = await firebase.firestore().collection("users").doc(uid).get();
+    const points = data.data().points;
+    setPoints(points);
+  }
+
   useEffect(() => {
     getBooks();
     getSkills();
+    getPoints();
   }, []);
 
   const renderCard = ({ item }) => (
@@ -99,16 +105,16 @@ export default function HomeScreen({ navigation }) {
           <LeaderboardIcon />
         </TouchableOpacity>
       </View>
+      <View style={styles.pointsView}>
+        <PointsIcon />
+        <Text style={styles.pointText}>{points} PTS</Text>
+      </View>
       <View style={styles.bodyView}>
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.subtitle}>BOOKS</Text>
-            <AddIcon />
+            <AddIcon onPress={() => navigation.navigate('AddBook')} />
           </View>
-          <Button
-            title="Add Book"
-            onPress={() => navigation.navigate("AddBook", { name: "Jane" })}
-          />
         </View>
         <View style={styles.cards}>
           <FlatList
@@ -121,12 +127,8 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.subtitle}>SKILLS</Text>
-            <AddIcon />
+            <AddIcon onPress={() => navigation.navigate('AddSkill')} />
           </View>
-          <Button
-            title="Add Skill"
-            onPress={() => navigation.navigate("AddSkill", { name: "Jane" })}
-          />
         </View>
         <View style={styles.cards}>
           <FlatList
@@ -160,7 +162,7 @@ const styles = StyleSheet.create({
   },
   bodyView: {
     flex: 9,
-    marginTop: "10%",
+    marginTop: "3%"
     // backgroundColor: "#444"
   },
   section: {
@@ -199,6 +201,24 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     justifyContent: "center",
     alignItems: "center",
+  },
+  pointsView: {
+    flex: 0.5,
+    flexDirection: "row",
+    backgroundColor: "#FFFA",
+    width: "35%",
+    borderRadius: 8,
+    padding: "3%",
+    alignSelf: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: "8%",
+    marginTop: "5%"
+  },
+  pointText: {
+    fontFamily: "MontserratMedium",
+    fontSize: 20,
+    marginLeft: "5%"
   },
   list: {
     // backgroundColor: "red"
