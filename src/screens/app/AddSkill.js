@@ -3,23 +3,25 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   SafeAreaView,
-  FlatList,
-  TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
 } from "react-native";
 
 const AddSkill = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.headerView}>
-        <Text style={styles.header}>Add New Skill</Text>
-      </View>
-      <View style={styles.bodyView}>
-
-          
-
-      </View>
+        <View style={styles.headerView}>
+          <Text style={styles.header}>Add New Book</Text>
+        </View>
+        <View style={styles.inputView}>
+          <TextInput style={styles.inputBox} placeholder="Title.."></TextInput>
+          <TextInput
+            style={styles.inputBox}
+            placeholder="Details.."
+          ></TextInput>
+          <TextInput style={styles.inputBox} placeholder="Points.."></TextInput>
+        </View>
     </SafeAreaView>
   );
 };
@@ -28,8 +30,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#57B3C8",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "stretch",
   },
   headerView: {
     flex: 1,
@@ -38,11 +40,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     paddingHorizontal: "3%",
-  },
-  bodyView: {
-    flex: 9,
-    marginTop: "10%",
-    // backgroundColor: "#444"
   },
   section: {
     marginVertical: 15,
@@ -58,29 +55,19 @@ const styles = StyleSheet.create({
     color: "#FFF",
     margin: 15,
   },
-  subtitle: {
-    color: "#FFF",
-    fontFamily: "Montserrat",
-    fontSize: 26,
-    letterSpacing: 2,
+  inputView: {
+    flex: 9,
+    margin: 50,
+    marginTop: 0,
+    marginBottom: 20,
   },
-  cards: {
-    width: "88%",
-    // paddingHorizontal: 3
-    // backgroundColor: "yellow"
-  },
-  card: {
-    backgroundColor: "#FFF",
-    borderRadius: 14,
-    opacity: 0.7,
-    width: 130,
-    aspectRatio: 0.9,
-    marginHorizontal: 5,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  list: {
-    // backgroundColor: "red"
+  inputBox: {
+    backgroundColor: "#FFFFFF",
+    width: "100%",
+    marginBottom: 10,
+    marginTop: 10,
+    borderRadius: 10,
+    padding: 20,
   },
 });
 
