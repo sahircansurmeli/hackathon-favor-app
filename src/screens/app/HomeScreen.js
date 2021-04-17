@@ -7,8 +7,13 @@ import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
 import AddIcon from "../../components/icons/AddIcon";
 
+import { createStackNavigator } from '@react-navigation/stack';
+
+
+
 const MOCK_BOOKS = [{ id: 1, title: 'K&R' }, { id: 2, title: 'Cracking the Coding Interview' }, { id: 3, title: 'Hello' }, { id: 4, title: 'Hey' }];
 const MOCK_SKILLS = [{ id: 1, title: 'Skateboarding' }, { id: 2, title: 'Skiing' }, { id: 3, title: 'Basketball' }, { id: 4, title: 'Maths' }];
+
 
 const Card = ({ title }) => {
   const [modal, showModal] = useState(false);
@@ -53,6 +58,7 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.subtitle}>BOOKS</Text>
             <AddIcon />
           </View>
+          <Button title="Add Book" onPress={() => navigation.navigate('AddBook', { name: 'Jane' })} />
         </View>
         <View style={styles.cards}>
           <FlatList data={books} renderItem={renderCard} keyExtractor={item => item.id} horizontal />
@@ -62,6 +68,7 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.subtitle}>SKILLS</Text>
             <AddIcon />
           </View>
+          <Button title="Add Skill" onPress={() => navigation.navigate('AddSkill', { name: 'Jane' })} />
         </View>
         <View style={styles.cards}>
           <FlatList data={skills} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
