@@ -17,7 +17,6 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { firebase } from "../../firebase";
 import CustomButton from "../../components/CustomButton";
-import BackArrowIcon from "../../components/icons/BackArrowIcon";
 
 const AddSkill = ({ navigation }) => {
   const [title, setTitle] = useState("");
@@ -156,7 +155,6 @@ const AddSkill = ({ navigation }) => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView style={styles.container}>
           <View style={styles.headerView}>
-            <BackArrowIcon onPress={() => navigation.goBack()} />
             <Text style={styles.header}>Add New Skill</Text>
           </View>
           <View style={styles.inputView}>

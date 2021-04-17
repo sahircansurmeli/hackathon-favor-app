@@ -14,12 +14,9 @@ import {
   Image
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
-import { useFocusEffect } from "@react-navigation/native";
 
 import { firebase } from "../../firebase";
 import CustomButton from "../../components/CustomButton";
-import BackArrowIcon from "../../components/icons/BackArrowIcon";
-
 
 const AddBook = ({ navigation }) => {
   const [title, setTitle] = useState("");
@@ -157,7 +154,6 @@ const AddBook = ({ navigation }) => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView style={styles.container}>
           <View style={styles.headerView}>
-            <BackArrowIcon onPress={() => navigation.goBack()} />
             <Text style={styles.header}>Add New Book</Text>
           </View>
           <View style={styles.inputView}>
