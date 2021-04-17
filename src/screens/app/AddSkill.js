@@ -26,8 +26,10 @@ const AddSkill = ({ navigation }) => {
         title: title,
         details: details,
         points: Number(points),
-        picture: "KR.jpg",
-        user: `users/${firebase.auth().currentUser.uid}`,
+        picture: "craking.jpg",
+        user: firebase
+          .firestore()
+          .doc("users/" + firebase.auth().currentUser.uid),
       })
       .then(() => {
         console.log("Skill added!");

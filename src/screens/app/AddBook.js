@@ -18,7 +18,7 @@ const AddBook = ({ navigation }) => {
   const [details, setDetails] = useState("");
   const [points, setPoints] = useState("");
 
-  const Post = () => {
+  const Post = async () => {
     firebase
       .firestore()
       .collection("books")
@@ -27,7 +27,9 @@ const AddBook = ({ navigation }) => {
         details: details,
         points: Number(points),
         picture: "KR.jpg",
-        user: `users/${firebase.auth().currentUser.uid}`,
+        user: firebase
+          .firestore()
+          .doc("users/" + firebase.auth().currentUser.uid),
       })
       .then(() => {
         console.log("Book added!");
