@@ -9,17 +9,72 @@ import {
   TouchableWithoutFeedback,
   Platform,
   Keyboard,
+  Button,
   Alert,
+  Platform,
+  Image
 } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
+import { useFocusEffect } from "@react-navigation/native";
 
 import { firebase } from "../../firebase";
 import CustomButton from "../../components/CustomButton";
 import BackArrowIcon from "../../components/icons/BackArrowIcon";
 
+
 const AddBook = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
   const [points, setPoints] = useState("");
+  const [image, setImage] = React.useState(null);
+
+  const getPermissionMediaLibrary = async () => {
+    if (Platform.OS !== 'web') {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      return status;
+    }
+  }
+
+  const getPermissionCamera = async () => {
+    if (Platform.OS !== "web") {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      return status;
+    }
+  }
+
+  const pickImageMediaLibrary = async () => {
+    const status = await getPermissionMediaLibrary();
+    if (status !== 'granted') {
+      Alert.alert('Sorry, we need media library permissions to make this work!');
+    } else {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      console.log(result);
+
+      if (!result.cancelled) {
+        setImage(result.uri);
+      }
+    }
+  }
+
+  const pickImageCamera = async () => {
+    const status = await getPermissionCamera();
+    if (status !== "granted") {
+      Alert.alert('Sorry, we need camera permissions to make this work!');
+    } else {
+      let result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        quality: 1
+      });
+
+      if (!result.cancelled) {
+        setImage(result.uri);
+      }
+    }
+  }
 
   const Post = async () => {
     firebase
@@ -93,10 +148,28 @@ const AddBook = ({ navigation }) => {
               text="Cancel"
               onPress={() => navigation.goBack()}
             />
+                      <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
+        <Button title="Take a photo from the camera" onPress={pickImageCamera} />
+        {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </View>
+      <View style={styles.buttonView}>
+        <CustomButton
+          color="#56ccf2"
+          style={styles.button}
+          text="Post"
+          onPress={alertButton}
+        />
+        <CustomButton
+          color="#bdbdbd"
+          style={styles.button}
+          text="Cancel"
+          onPress={() => navigation.goBack()}
+        />
+      </View>
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
+
   );
 };
 
