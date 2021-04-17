@@ -1,15 +1,21 @@
-import React from 'react';
-import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
+import DetailModal from '../../components/DetailModal';
 import { firebase } from "../../firebase";
 
 const MOCK_BOOKS = [{ id: 1, title: 'K&R' }, { id: 2, title: 'Cracking the Coding Interview' }, { id: 3, title: 'Hello' }, { id: 4, title: 'Hey' }];
 const MOCK_SKILLS = [{ id: 1, title: 'Skateboarding' }, { id: 2, title: 'Skiing' }, { id: 3, title: 'Basketball' }, { id: 4, title: 'Maths' }];
 
 const Card = ({ title }) => {
+  const [modal, showModal] = useState(false);
+
   return (
-    <View style={styles.card}>
-      <Text>{title}</Text>
-    </View>
+    <TouchableOpacity onPress={() => showModal(true)}>
+      <View style={styles.card}>
+          <Text>{title}</Text>
+        <DetailModal visible={modal} onCancel={() => showModal(false)} />
+      </View>
+    </TouchableOpacity>
   )
 }
 
@@ -84,7 +90,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2
   },
   cards: {
-    width: "90%",
+    width: "88%",
     // paddingHorizontal: 3
     // backgroundColor: "yellow"
   },
