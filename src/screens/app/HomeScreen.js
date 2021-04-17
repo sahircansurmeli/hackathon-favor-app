@@ -26,7 +26,7 @@ const Card = ({ item }) => {
         <DetailModal
           visible={modal}
           item={item}
-          onCancel={() => showModal(false)}
+          close={() => showModal(false)}
         />
       </View>
     </TouchableOpacity>

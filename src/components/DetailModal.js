@@ -8,9 +8,9 @@ import CheckIcon from "./icons/CheckIcon";
 const DetailModal = ({
   item: { title, details, points, name, user, itemPath },
   visible,
-  onCancel,
+  close,
 }) => {
-  const [requested, setRequested] = useState(true);
+  const [requested, setRequested] = useState(false);
 
   const request = async () => {
     let currentUser = firebase.auth().currentUser.uid;
@@ -47,6 +47,14 @@ const DetailModal = ({
               <View style={styles.titleView}>
                 <Text style={styles.title}>Requested</Text>
               </View>
+              <View style={styles.buttonView}>
+                <CustomButton
+                  color="#bdbdbd"
+                  style={styles.modalButton}
+                  text="Dismiss"
+                  onPress={close}
+                />
+              </View>
             </Fragment>
           ) : (
             <Fragment>
@@ -69,7 +77,7 @@ const DetailModal = ({
                   color="#bdbdbd"
                   style={styles.modalButton}
                   text="Cancel"
-                  onPress={onCancel}
+                  onPress={close}
                 />
                 <CustomButton
                   color="#56ccf2"
