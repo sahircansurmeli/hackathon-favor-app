@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,19 +12,27 @@ import { firebase } from "../../firebase";
 import CustomButton from "../../components/CustomButton";
 import BackArrowIcon from "../../components/icons/BackArrowIcon";
 
-const Post = (props) => {
-  firestore()
-    .collection("Users")
-    .add({
-      name: "Ada Lovelace",
-      age: 30,
-    })
-    .then(() => {
-      console.log("User added!");
-    });
-};
-
 const AddBook = ({ navigation, route }) => {
+  const [title, setTitle] = useState("");
+  const [details, setDetails] = useState("");
+  const [points, setPoints] = useState("");
+
+  const Post = () => {
+    firebase
+      .firestore()
+      .collection("books")
+      .add({
+        title: title,
+        details: details,
+        points: points,
+        picture: "KR.jpg",
+        user: firebase.auth().currentUser,
+      })
+      .then(() => {
+        console.log("User added!");
+      });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
@@ -32,12 +40,32 @@ const AddBook = ({ navigation, route }) => {
         <Text style={styles.header}>Add New Book</Text>
       </View>
       <View style={styles.inputView}>
-        <TextInput style={styles.inputBox} placeholder="Title.."></TextInput>
-        <TextInput style={styles.inputBox} placeholder="Details.."></TextInput>
-        <TextInput style={styles.inputBox} placeholder="Points.."></TextInput>
+        <TextInput
+          style={styles.inputBox}
+          placeholder="Title.."
+          onChangeText={setTitle}
+          value={title}
+        ></TextInput>
+        <TextInput
+          style={styles.inputBox}
+          placeholder="Details.."
+          onChangeText={setDetails}
+          value={details}
+        ></TextInput>
+        <TextInput
+          style={styles.inputBox}
+          placeholder="Points.."
+          onChangeText={setPoints}
+          value={points}
+        ></TextInput>
       </View>
       <View style={styles.buttonView}>
-        <CustomButton color="#56ccf2" style={styles.button} text="Post" />
+        <CustomButton
+          color="#56ccf2"
+          style={styles.button}
+          text="Post"
+          onPress={Post}
+        />
         <CustomButton color="#bdbdbd" style={styles.button} text="Cancel" />
       </View>
     </SafeAreaView>
