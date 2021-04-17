@@ -105,7 +105,6 @@ const styles = StyleSheet.create({
     width: "88%",
     borderRadius: 16,
     opacity: 0.97,
-    // padding: 20,
   },
   titleView: {
     alignItems: "center",
