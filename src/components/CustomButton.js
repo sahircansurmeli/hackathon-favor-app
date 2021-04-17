@@ -1,6 +1,5 @@
 import React from "react";
-import { Text } from "react-native";
-import { TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 
 const CustomButton = (props) => {
   const color = props.color ?? "rgba(100, 90, 255)";

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
 import DetailModal from '../../components/DetailModal';
 import { firebase } from "../../firebase";
 
 import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
+import AddIcon from "../../components/icons/AddIcon";
 
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -28,10 +29,10 @@ const Card = ({ title }) => {
 }
 
 export default function HomeScreen({ navigation }) {
-  const [books, setBooks] = React.useState([]);
-  const [skills, setSkills] = React.useState([]);
+  const [books, setBooks] = useState([]);
+  const [skills, setSkills] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     firebase.firestore().collection("books").get()
       .then((snapshot) => setBooks(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))))
       .catch((err) => console.log("Error retrieving books", err));
@@ -47,7 +48,7 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
-        <ProfileIcon onPress={() => console.log("Profile")} />
+        <ProfileIcon onPress={() => navigation.navigate("Profile")} />
         <Text style={styles.header}>EXCHANGE</Text>
         <LeaderboardIcon onPress={() => console.log("Leaderboard")} />
       </View>
@@ -55,6 +56,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.subtitle}>BOOKS</Text>
+            <AddIcon />
           </View>
           <Button title="Add Book" onPress={() => navigation.navigate('AddBook', { name: 'Jane' })} />
         </View>
@@ -64,6 +66,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.subtitle}>SKILLS</Text>
+            <AddIcon />
           </View>
           <Button title="Add Skill" onPress={() => navigation.navigate('AddSkill', { name: 'Jane' })} />
         </View>
@@ -108,6 +111,8 @@ const styles = StyleSheet.create({
     margin: 15
   },
   sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     color: "#FFF",
     margin: 15
   },
