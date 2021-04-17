@@ -37,7 +37,7 @@ export default function App() {
           </View>
         </View>
         <View style={styles.cards}>
-          <FlatList data={MOCK_BOOKS} renderItem={renderCard} keyExtractor={item => item.id} horizontal />
+          <FlatList data={MOCK_BOOKS} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
         </View>
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -45,7 +45,7 @@ export default function App() {
           </View>
         </View>
         <View style={styles.cards}>
-          <FlatList data={MOCK_SKILLS} renderItem={renderCard} keyExtractor={item => item.id} horizontal />
+          <FlatList data={MOCK_SKILLS} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
         </View>
 
         <Button title="Sign out" onPress={() => firebase.auth().signOut()} />
