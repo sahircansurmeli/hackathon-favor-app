@@ -16,19 +16,16 @@ import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
 import AddIcon from "../../components/icons/AddIcon";
 
-const Card = ({ title, details, points, name }) => {
+const Card = ({ item }) => {
   const [modal, showModal] = useState(false);
 
   return (
     <TouchableOpacity onPress={() => showModal(true)}>
       <View style={styles.card}>
-        <Text>{title}</Text>
+        <Text>{item.title}</Text>
         <DetailModal
           visible={modal}
-          title={title}
-          points={points}
-          details={details}
-          name={name}
+          item={item}
           onCancel={() => showModal(false)}
         />
       </View>
@@ -54,7 +51,13 @@ export default function HomeScreen({ navigation }) {
       .then((snapshot) => {
         const tempBooks = snapshot.docs.map(async (doc) => {
           const username = await extractUsername(doc.data().user);
-          return { id: doc.id, name: username, ...doc.data() };
+          return {
+            id: doc.id,
+            name: username,
+            ...doc.data(),
+            // will be used when attaching requet
+            itemPath: doc.ref,
+          };
         });
         Promise.all(tempBooks).then((values) => setBooks(values));
       })
@@ -69,7 +72,12 @@ export default function HomeScreen({ navigation }) {
       .then((snapshot) => {
         const tempSkills = snapshot.docs.map(async (doc) => {
           const username = await extractUsername(doc.data().user);
-          return { id: doc.id, name: username, ...doc.data() };
+          return {
+            id: doc.id,
+            name: username,
+            ...doc.data(),
+            itemPath: doc.ref.path,
+          };
         });
         Promise.all(tempSkills).then((values) => setSkills(values));
       })
@@ -83,10 +91,11 @@ export default function HomeScreen({ navigation }) {
 
   const renderCard = ({ item }) => (
     <Card
-      title={item.title}
-      details={item.details}
-      points={item.points}
-      name={item.name}
+      // title={item.title}
+      // details={item.details}
+      // points={item.points}
+      // name={item.name}
+      item={item}
     />
   );
 
