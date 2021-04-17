@@ -16,6 +16,7 @@ import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
 import AddIcon from "../../components/icons/AddIcon";
 import PointsIcon from "../../components/icons/PointsIcon";
+import RequestModal from "../../components/RequestModal";
 
 const Card = ({ item }) => {
   const [modal, showModal] = useState(false);
@@ -55,9 +56,11 @@ export default function HomeScreen({ navigation }) {
   const [books, setBooks] = useState([]);
   const [skills, setSkills] = useState([]);
   const [points, setPoints] = useState(0);
-  const [requestsModal, showRequestsModal] = useState(false);
-  const [latestRequest, updateLatestRequest] = useState([]);
+  const [requestModal, showRequestModal] = useState(false);
   const uid = firebase.auth().currentUser.uid;
+
+  const [receivedRequestItem, setReceivedRequestItem] = useState({});
+  const [receivedRequestUser, setReceivedRequestUser] = useState({});
 
   const extractUsername = async (userCollection) => {
     const user = await userCollection.get();
@@ -115,12 +118,19 @@ export default function HomeScreen({ navigation }) {
   const followRequests = async () => {
     const doc = await firebase.firestore().collection("users").doc(uid);
     const observer = doc.onSnapshot(
-      (docSnapshot) => {
-        const reqsArray = docSnapshot.data().requests;
-        const req = reqsArray[0];
-        console.log(req);
-        // updateLatestRequest(reqs);
-        showRequestsModal(true);
+      async (docSnapshot) => {
+        const lastRequest = docSnapshot.data().requests[0];
+        const item = await lastRequest.item.get();
+        const user = await lastRequest.userRequesting.get();
+        const { details, picture, points, title } = item.data();
+        const { name, points: userPoints } = user.data();
+
+        console.log(`item: ${title} ${points}`);
+        console.log(`user: ${name} ${userPoints}`);
+
+        setReceivedRequestItem({ details, picture, points, title });
+        setReceivedRequestUser({ name, points: userPoints });
+        showRequestModal(true);
       },
       (err) => {
         console.log(`Encountered error: ${err}`);
@@ -128,16 +138,20 @@ export default function HomeScreen({ navigation }) {
     );
   };
 
-  const getLatestRequest = () => {
-    console.log(latestRequest);
-  };
+  useEffect(() => {
+    console.log("receivedRequestItem");
+    console.log(receivedRequestItem);
+    console.log("receivedRequestUser");
+    console.log(receivedRequestUser);
+    console.log("requestModal");
+    console.log(requestModal);
+  }, [receivedRequestItem, receivedRequestUser, requestModal]);
 
   useEffect(() => {
     getBooks();
     getSkills();
     getPoints();
     followRequests();
-    // getLatestRequest();
   }, []);
 
   const renderCard = ({ item }) => <Card item={item} />;
@@ -189,11 +203,12 @@ export default function HomeScreen({ navigation }) {
         <TouchableOpacity style={styles.requestsButton}>
           <Text style={styles.requestsText}>REQUESTS</Text>
         </TouchableOpacity>
-        {/* <DetailModal
-          visible={requestsModal}
-          item={}
-          close={() => showRequestsModal(false)}
-        /> */}
+        <RequestModal
+          visible={requestModal}
+          item={receivedRequestItem}
+          user={receivedRequestUser}
+          close={() => showRequestModal(false)}
+        />
       </View>
     </SafeAreaView>
   );
