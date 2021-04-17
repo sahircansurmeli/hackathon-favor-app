@@ -1,6 +1,5 @@
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
-// import { TouchableOpacity } from "react-native-gesture-handler";
 
 const CustomButton = (props) => {
   const color = props.color ?? "rgba(100, 90, 255)";
