@@ -16,19 +16,6 @@ import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
 import AddIcon from "../../components/icons/AddIcon";
 
-const MOCK_BOOKS = [
-  { id: 1, title: "K&R" },
-  { id: 2, title: "Cracking the Coding Interview" },
-  { id: 3, title: "Hello" },
-  { id: 4, title: "Hey" },
-];
-const MOCK_SKILLS = [
-  { id: 1, title: "Skateboarding" },
-  { id: 2, title: "Skiing" },
-  { id: 3, title: "Basketball" },
-  { id: 4, title: "Maths" },
-];
-
 const Card = ({ title }) => {
   const [modal, showModal] = useState(false);
 
@@ -77,9 +64,7 @@ export default function HomeScreen() {
       <View style={styles.headerView}>
         <ProfileIcon onPress={() => navigation.navigate("Profile")} />
         <Text style={styles.header}>EXCHANGE</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Leaderboard")}>
-          <LeaderboardIcon />
-        </TouchableOpacity>
+        <LeaderboardIcon onPress={() => navigation.navigate("Leaderboard")} />
       </View>
       <View style={styles.bodyView}>
         <View style={styles.section}>
