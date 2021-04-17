@@ -34,17 +34,18 @@ const leaderboardStyles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    borderColor: "black",
-    borderWidth: 2,
     height: 70,
     alignItems: "center",
     backgroundColor: "#fff",
     borderRadius: 6,
     paddingHorizontal: 30,
+    borderBottomColor: "#ccc",
+    borderBottomWidth: 2,
   },
   points: {
     fontSize: 22,
-    marginRight: 40,
+    minWidth: 70,
+    marginRight: 5,
   },
   name: {
     fontSize: 18,
@@ -52,6 +53,25 @@ const leaderboardStyles = StyleSheet.create({
 });
 
 export default function LeaderboardScreen() {
+  const [users, setUsers] = React.useState([]);
+
+  React.useEffect(() => {
+    firebase
+      .firestore()
+      .collection("users")
+      .orderBy("points", "desc")
+      .get()
+      .then((snapshot) =>
+        setUsers(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+        )
+      )
+      .catch((err) => console.log("Error retrieving users", err));
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
@@ -61,7 +81,7 @@ export default function LeaderboardScreen() {
       </View>
       <View style={styles.bodyView}>
         <FlatList
-          data={MOCK_LEADERBOARD}
+          data={users}
           renderItem={leaderboardItem}
           keyExtractor={(item) => item.id}
         />
