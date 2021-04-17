@@ -6,8 +6,13 @@ import { firebase } from "../../firebase";
 import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
 
+import { createStackNavigator } from '@react-navigation/stack';
+
+
+
 const MOCK_BOOKS = [{ id: 1, title: 'K&R' }, { id: 2, title: 'Cracking the Coding Interview' }, { id: 3, title: 'Hello' }, { id: 4, title: 'Hey' }];
 const MOCK_SKILLS = [{ id: 1, title: 'Skateboarding' }, { id: 2, title: 'Skiing' }, { id: 3, title: 'Basketball' }, { id: 4, title: 'Maths' }];
+
 
 const Card = ({ title }) => {
   const [modal, showModal] = useState(false);
@@ -22,7 +27,7 @@ const Card = ({ title }) => {
   );
 }
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [books, setBooks] = React.useState([]);
   const [skills, setSkills] = React.useState([]);
 
@@ -51,6 +56,7 @@ export default function HomeScreen() {
           <View style={styles.sectionHeader}>
             <Text style={styles.subtitle}>BOOKS</Text>
           </View>
+          <Button title="Add Book" onPress={() => navigation.navigate('AddBook', { name: 'Jane' })} />
         </View>
         <View style={styles.cards}>
           <FlatList data={books} renderItem={renderCard} keyExtractor={item => item.id} horizontal />
@@ -59,6 +65,7 @@ export default function HomeScreen() {
           <View style={styles.sectionHeader}>
             <Text style={styles.subtitle}>SKILLS</Text>
           </View>
+          <Button title="Add Skill" onPress={() => navigation.navigate('AddSkill', { name: 'Jane' })} />
         </View>
         <View style={styles.cards}>
           <FlatList data={skills} renderItem={renderCard} keyExtractor={item => item.id.toString()} horizontal />
