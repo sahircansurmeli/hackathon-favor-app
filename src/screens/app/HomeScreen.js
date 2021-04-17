@@ -7,10 +7,10 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  Image
 } from "react-native";
 import DetailModal from "../../components/DetailModal";
 import { firebase } from "../../firebase";
-import { useNavigation } from "@react-navigation/native";
 
 import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
@@ -19,11 +19,21 @@ import PointsIcon from "../../components/icons/PointsIcon";
 
 const Card = ({ item }) => {
   const [modal, showModal] = useState(false);
+  const [pictureUrl, setPictureUrl] = useState("");
+
+  React.useEffect(() => {
+    firebase.storage().ref(item.picture).getDownloadURL()
+      .then(setPictureUrl);
+  }, [item.id]);
 
   return (
     <TouchableOpacity onPress={() => showModal(true)}>
       <View style={styles.card}>
-        <Text>{item.title}</Text>
+        {
+          pictureUrl
+            ? <Image source={{ uri: pictureUrl }} style={{ width: "100%", height: "100%", overflow: "hidden", borderRadius: 14 }} />
+            : <Text>{item.title}</Text>
+        }
         <DetailModal
           visible={modal}
           item={item}
@@ -89,7 +99,7 @@ export default function HomeScreen({ navigation }) {
     const points = data.data().points;
     setPoints(points);
   }
-  
+
   useEffect(() => {
     getBooks();
     getSkills();
