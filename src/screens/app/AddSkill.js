@@ -6,19 +6,22 @@ import {
   SafeAreaView,
   TextInput,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Platform,
+  Keyboard,
   Alert,
 } from "react-native";
 
 import { firebase } from "../../firebase";
 import CustomButton from "../../components/CustomButton";
-import BackArrow from "../../components/icons/BackArrow";
+import BackArrowIcon from "../../components/icons/BackArrowIcon";
 
 const AddSkill = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
   const [points, setPoints] = useState("");
 
-  const Post = () => {
+  const Post = async () => {
     firebase
       .firestore()
       .collection("skills")
@@ -26,13 +29,14 @@ const AddSkill = ({ navigation }) => {
         title: title,
         details: details,
         points: Number(points),
-        picture: "craking.jpg",
+        picture: "cracking.jpg",
         user: firebase
           .firestore()
           .doc("users/" + firebase.auth().currentUser.uid),
       })
       .then(() => {
         console.log("Skill added!");
+        navigation.goBack();
       });
   };
 
@@ -45,47 +49,54 @@ const AddSkill = ({ navigation }) => {
     ]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.headerView}>
-        <BackArrow onPress={() => navigation.goBack()} />
-        <Text style={styles.header}>Add New Book</Text>
-      </View>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.inputBox}
-          placeholder="Title.."
-          onChangeText={setTitle}
-          value={title}
-        ></TextInput>
-        <TextInput
-          style={styles.inputBox}
-          placeholder="Details.."
-          onChangeText={setDetails}
-          value={details}
-        ></TextInput>
-        <TextInput
-          style={styles.inputBox}
-          placeholder="Points.."
-          onChangeText={setPoints}
-          value={points}
-          keyboardType="numeric"
-        ></TextInput>
-      </View>
-      <View style={styles.buttonView}>
-        <CustomButton
-          color="#56ccf2"
-          style={styles.button}
-          text="Post"
-          onPress={alertButton}
-        />
-        <CustomButton
-          color="#bdbdbd"
-          style={styles.button}
-          text="Cancel"
-          onPress={() => navigation.goBack()}
-        />
-      </View>
-    </SafeAreaView>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.headerView}>
+            <BackArrowIcon onPress={() => navigation.goBack()} />
+            <Text style={styles.header}>Add New Book</Text>
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.inputBox}
+              placeholder="Title.."
+              onChangeText={setTitle}
+              value={title}
+            ></TextInput>
+            <TextInput
+              style={styles.inputBox}
+              placeholder="Details.."
+              onChangeText={setDetails}
+              value={details}
+            ></TextInput>
+            <TextInput
+              style={styles.inputBox}
+              placeholder="Points.."
+              onChangeText={setPoints}
+              value={points}
+              keyboardType="numeric"
+            ></TextInput>
+          </View>
+          <View style={styles.buttonView}>
+            <CustomButton
+              color="#56ccf2"
+              style={styles.button}
+              text="Post"
+              onPress={alertButton}
+            />
+            <CustomButton
+              color="#bdbdbd"
+              style={styles.button}
+              text="Cancel"
+              onPress={() => navigation.goBack()}
+            />
+          </View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

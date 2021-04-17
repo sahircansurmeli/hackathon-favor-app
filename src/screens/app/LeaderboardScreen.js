@@ -121,9 +121,7 @@ export default function LeaderboardScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
-        <TouchableOpacity onPress={() => navigator.goBack()}>
-          <BackArrowIcon />
-        </TouchableOpacity>
+        <BackArrowIcon onPress={() => navigator.goBack()} />
         <Text style={styles.header}>LEADERBOARD</Text>
         <SearchIcon onPress={() => console.log("Leaderboard")} />
       </View>
