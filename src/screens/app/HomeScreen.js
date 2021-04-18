@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import DetailModal from "../../components/DetailModal";
 import { firebase } from "../../firebase";
+import { useFocusEffect } from "@react-navigation/native"
 
 import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
@@ -23,7 +24,13 @@ const Card = ({ item }) => {
   const [pictureUrl, setPictureUrl] = useState("");
 
   React.useEffect(() => {
-    firebase.storage().ref(item.picture).getDownloadURL().then(setPictureUrl);
+    firebase.storage().ref(item.id + ".jpg").getDownloadURL()
+      .then(setPictureUrl)
+      .catch((err) => {
+        if (err.code === "storage/object-not-found") {
+          setPictureUrl("");
+        }
+      });
   }, [item.id]);
 
   return (
@@ -147,12 +154,14 @@ export default function HomeScreen({ navigation }) {
     console.log(requestModal);
   }, [receivedRequestItem, receivedRequestUser, requestModal]);
 
-  useEffect(() => {
-    getBooks();
-    getSkills();
-    getPoints();
-    followRequests();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      getBooks();
+      getSkills();
+      getPoints();
+    }, [])
+  );
+
 
   const renderCard = ({ item }) => <Card item={item} />;
 
