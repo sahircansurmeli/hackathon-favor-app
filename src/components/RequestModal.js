@@ -50,7 +50,7 @@ const RequestModal = ({
             <View style={styles.titleView}>
               <Text style={styles.title}>You have a new request</Text>
               <Text style={styles.description}>
-                {userName} is requesting {title} which is worth {itemPoints}{" "}
+                {userName} is requesting {title} which is worth {itemPoints} pts{" "}
               </Text>
             </View>
             <View style={styles.buttonView}>
