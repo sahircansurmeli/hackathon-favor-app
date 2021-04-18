@@ -176,7 +176,7 @@ const AddBook = ({ navigation }) => {
               value={points}
               keyboardType="numeric"
             ></TextInput>
-            <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
+            <Button title="Pick an image from library" onPress={pickImageMediaLibrary} />
             <Button title="Take a photo from the camera" onPress={pickImageCamera} />
             {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </View>
