@@ -11,12 +11,17 @@ const Stack = createStackNavigator();
 
 export default function AuthContainer() {
   return (
-    <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName="Home" screenOptions={{
+      headerTransparent: true,
+      headerTitle: () => null,
+      headerBackTitleVisible: false,
+      headerTintColor: "#FFFFFF"
+    }}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
       <Stack.Screen name="AddBook" component={AddBook} />
       <Stack.Screen name="AddSkill" component={AddSkill} />
-      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerTintColor: "#000" }} />
     </Stack.Navigator>
   );
 }
