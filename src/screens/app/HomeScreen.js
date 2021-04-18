@@ -22,6 +22,7 @@ import RequestModal from "../../components/RequestModal";
 const Card = ({ item }) => {
   const [modal, showModal] = useState(false);
   const [pictureUrl, setPictureUrl] = useState("");
+  const [isPictureReady, setIsPictureReady] = useState(false);
 
   React.useEffect(() => {
     firebase
@@ -36,10 +37,17 @@ const Card = ({ item }) => {
       });
   }, [item.id]);
 
+  React.useEffect(() => {
+    if (pictureUrl) {
+      console.log("prefetch");
+      Image.prefetch(pictureUrl).then(setIsPictureReady);
+    }
+  }, [pictureUrl]);
+
   return (
     <TouchableOpacity onPress={() => showModal(true)}>
       <View style={styles.card}>
-        {pictureUrl ? (
+        {pictureUrl && isPictureReady ? (
           <Image
             source={{ uri: pictureUrl }}
             style={{
@@ -56,6 +64,8 @@ const Card = ({ item }) => {
           visible={modal}
           item={item}
           close={() => showModal(false)}
+          pictureUrl={pictureUrl}
+          isPictureReady={isPictureReady}
         />
       </View>
     </TouchableOpacity>
