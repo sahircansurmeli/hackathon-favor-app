@@ -178,12 +178,14 @@ export default function HomeScreen({ navigation }) {
   };
 
   const followRequests = async () => {
-    const doc = await firebase.firestore().collection("users").doc(uid);
-    doc
-      .onSnapshot(createFnCounter(handleActivitySubsription, 1))
-      .catch((err) => {
-        console.log(`Encountered error: ${err}`);
-      });
+    try {
+      const doc = await firebase.firestore().collection("users").doc(uid);
+      doc
+        .onSnapshot(createFnCounter(handleActivitySubsription, 1))
+    } catch (err) {
+      console.log(`Encountered error: ${err}`)
+    }
+
   };
 
   useFocusEffect(
@@ -202,9 +204,7 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.headerView}>
         <ProfileIcon onPress={() => navigation.navigate("Profile")} />
         <Text style={styles.header}>EXCHANGE</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Leaderboard")}>
-          <LeaderboardIcon />
-        </TouchableOpacity>
+        <LeaderboardIcon onPress={() => navigation.navigate("Leaderboard")} />
       </View>
       <View style={styles.pointsView}>
         <PointsIcon />

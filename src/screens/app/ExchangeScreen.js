@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { firebase } from "../../firebase";
 
 import ShadowTab from "../../components/ShadowTab";
 import BackArrow from "../../components/icons/BackArrow";
+import DetailModal from "../../components/DetailModal";
 
 const MOCK_EXCHANGES = [
   {
@@ -27,13 +28,18 @@ const MOCK_EXCHANGES = [
 ];
 
 function Exchange({ item: { takerName, giverName, itemPoints, itemName } }) {
+  const [modal, showModal] = useState(true);
+
   return (
-    <View style={exchangeStyle.container}>
-      <Text style={exchangeStyle.text}>{itemPoints}</Text>
-      <Text style={exchangeStyle.text}>{takerName}</Text>
-      <BackArrow style={{ transform: [{ rotate: "180deg" }] }} />
-      <Text style={exchangeStyle.text}>{giverName}</Text>
-    </View>
+    <TouchableOpacity style={exchangeStyle.container} onPress={() => showModal(true)}>
+      <View style={exchangeStyle.container}>
+        <Text style={exchangeStyle.text}>{itemPoints}</Text>
+        <Text style={exchangeStyle.text}>{takerName}</Text>
+        <BackArrow style={{ transform: [{ rotate: "180deg" }] }} />
+        <Text style={exchangeStyle.text}>{giverName}</Text>
+      </View >
+      {/* <DetailModal visible={modal} item={item} close={() => showModal(false)} /> */}
+    </TouchableOpacity>
   );
 }
 

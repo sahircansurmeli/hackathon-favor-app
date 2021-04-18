@@ -18,6 +18,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { firebase } from "../../firebase";
 import CustomButton from "../../components/CustomButton";
 
+import CameraButton from "../../components/CameraButton";
+import CameraRollButton from "../../components/CameraRollButton";
+
 const AddSkill = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
@@ -177,8 +180,12 @@ const AddSkill = ({ navigation }) => {
               value={points}
               keyboardType="numeric"
             ></TextInput>
-            <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
-            <Button title="Take a photo from the camera" onPress={pickImageCamera} />
+            <View style={styles.imageButtonView}>
+              <CameraButton onPress={pickImageCamera} />
+              <CameraRollButton onPress={pickImageMediaLibrary} />
+            </View>
+            {/* <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
+            <Button title="Take a photo from the camera" onPress={pickImageCamera} /> */}
             {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </View>
           <View style={styles.buttonView}>
@@ -255,6 +262,12 @@ const styles = StyleSheet.create({
     marginHorizontal: "3%",
     marginBottom: "5%",
   },
+  imageButtonView: {
+    marginTop: "10%",
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+  }
 });
 
 export default AddSkill;
