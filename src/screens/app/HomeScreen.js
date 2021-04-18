@@ -72,11 +72,27 @@ const Card = ({ item }) => {
   );
 };
 
+// given function will be called after invokeBeforeExecution counter is
+function createFnCounter(fn, invokeBeforeExecution) {
+  let count = 0;
+  console.log(`count ${count}`);
+  return (snapshot) => {
+    count++;
+    if (count <= invokeBeforeExecution) {
+      return null;
+    }
+
+    return fn(snapshot, count);
+  };
+}
+
 export default function HomeScreen({ navigation }) {
   const [books, setBooks] = useState([]);
   const [skills, setSkills] = useState([]);
   const [points, setPoints] = useState(0);
   const [requestModal, showRequestModal] = useState(false);
+  const [isInitialFetch, setIsInitialFetch] = useState(true);
+
   const uid = firebase.auth().currentUser.uid;
 
   const [receivedRequestItem, setReceivedRequestItem] = useState({});
@@ -129,55 +145,54 @@ export default function HomeScreen({ navigation }) {
       .catch((err) => console.log("Error retrieving skills", err));
   };
 
+  useEffect(() => {
+    console.log("===================");
+    console.log(isInitialFetch);
+  }, [isInitialFetch]);
+
   const getPoints = async () => {
     const data = await firebase.firestore().collection("users").doc(uid).get();
     const points = data.data().points;
     setPoints(points);
   };
 
-  const followRequests = async () => {
-    const doc = await firebase.firestore().collection("users").doc(uid);
-    const observer = doc.onSnapshot(
-      async (docSnapshot) => {
-        const lastRequest = docSnapshot.data().requests[0];
-        const item = await lastRequest.item.get();
-        const user = await lastRequest.userRequesting.get();
-        const { details, picture, points, title } = item.data();
-        const { name, points: userPoints } = user.data();
+  const handleActivitySubsription = async (snapshot) => {
+    const requests = snapshot.data().requests;
+    const lastRequest = requests[requests.length - 1];
+    const item = await lastRequest.item.get();
+    const user = await lastRequest.userRequesting.get();
+    const { details, picture, points, title } = item.data();
+    const { name, points: userPoints } = user.data();
 
-        console.log(`item: ${title} ${points}`);
-        console.log(`user: ${name} ${userPoints}`);
+    console.log(`item: ${title}`);
+    console.log(`user: ${name}`);
 
-        setReceivedRequestItem({
-          details,
-          picture,
-          points,
-          title,
-          ref: item.ref,
-        });
-        setReceivedRequestUser({ name, points: userPoints, ref: user.ref });
-        showRequestModal(true);
-      },
-      (err) => {
-        console.log(`Encountered error: ${err}`);
-      }
-    );
+    setReceivedRequestItem({
+      details,
+      picture,
+      points,
+      title,
+      ref: item.ref,
+    });
+    setReceivedRequestUser({ name, points: userPoints, ref: user.ref });
+    showRequestModal(true);
   };
 
-  useEffect(() => {
-    console.log("receivedRequestItem");
-    console.log(receivedRequestItem);
-    console.log("receivedRequestUser");
-    console.log(receivedRequestUser);
-    console.log("requestModal");
-    console.log(requestModal);
-  }, [receivedRequestItem, receivedRequestUser, requestModal]);
+  const followRequests = async () => {
+    const doc = await firebase.firestore().collection("users").doc(uid);
+    doc
+      .onSnapshot(createFnCounter(handleActivitySubsription, 1))
+      .catch((err) => {
+        console.log(`Encountered error: ${err}`);
+      });
+  };
 
   useFocusEffect(
     React.useCallback(() => {
       getBooks();
       getSkills();
       getPoints();
+      followRequests();
     }, [])
   );
 
