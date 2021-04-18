@@ -53,7 +53,10 @@ const ProfileScreen = ({ navigation }) => {
       </View>
       <View style={styles.contentView}>
         <ShadowTab text="Achievements" />
-        <ShadowTab text="Upcoming Exchanges" />
+        <ShadowTab
+          text="Upcoming Exchanges"
+          onPress={() => navigation.navigate("Exchanges")}
+        />
         <ShadowTab text="Previous Exchanges" />
       </View>
       <Button title="Sign out" onPress={() => firebase.auth().signOut()} />
