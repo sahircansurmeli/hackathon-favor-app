@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { firebase } from "../../firebase";
 
 import ShadowTab from "../../components/ShadowTab";
@@ -28,17 +35,14 @@ const MOCK_EXCHANGES = [
 ];
 
 function Exchange({ item: { takerName, giverName, itemPoints, itemName } }) {
-  const [modal, showModal] = useState(true);
-
   return (
-    <TouchableOpacity style={exchangeStyle.container} onPress={() => showModal(true)}>
+    <TouchableOpacity style={exchangeStyle.container}>
       <View style={exchangeStyle.container}>
         <Text style={exchangeStyle.text}>{itemPoints}</Text>
         <Text style={exchangeStyle.text}>{takerName}</Text>
         <BackArrow style={{ transform: [{ rotate: "180deg" }] }} />
         <Text style={exchangeStyle.text}>{giverName}</Text>
-      </View >
-      {/* <DetailModal visible={modal} item={item} close={() => showModal(false)} /> */}
+      </View>
     </TouchableOpacity>
   );
 }
