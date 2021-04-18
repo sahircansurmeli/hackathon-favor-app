@@ -11,7 +11,6 @@ import {
 import { firebase } from "../../firebase";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 
-import BackArrowIcon from "../../components/icons/BackArrowIcon";
 import SearchIcon from "../../components/icons/SearchIcon";
 import { useNavigation } from "@react-navigation/core";
 
@@ -121,7 +120,6 @@ export default function LeaderboardScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
-        <BackArrowIcon onPress={() => navigator.goBack()} />
         <Text style={styles.header}>LEADERBOARD</Text>
         <SearchIcon onPress={() => console.log("Leaderboard")} />
       </View>

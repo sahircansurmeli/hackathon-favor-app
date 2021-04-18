@@ -67,7 +67,7 @@ const DetailModal = ({
               <View style={styles.titleView}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.definition}>
-                  Learn {title} from a fellow Mason student
+                  {details}
                 </Text>
                 <Text style={styles.user}>by {name}</Text>
                 <Text style={styles.points}>{points} PTS</Text>
