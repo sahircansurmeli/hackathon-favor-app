@@ -13,6 +13,7 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 
 import SearchIcon from "../../components/icons/SearchIcon";
 import { useNavigation } from "@react-navigation/core";
+import BackArrow from "../../components/icons/BackArrow";
 
 function leaderboardItem({ item }) {
   return (
@@ -107,7 +108,6 @@ const tabBar = StyleSheet.create({
 
 export default function LeaderboardScreen() {
   const layout = useWindowDimensions();
-  const navigator = useNavigation();
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([

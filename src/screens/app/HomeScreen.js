@@ -156,34 +156,38 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handleActivitySubsription = async (snapshot) => {
-    const requests = snapshot.data().requests;
-    const lastRequest = requests[requests.length - 1];
-    const item = await lastRequest.item.get();
-    const user = await lastRequest.userRequesting.get();
-    const { details, picture, points, title } = item.data();
-    const { name, points: userPoints } = user.data();
+    try {
+      const requests = snapshot.data().requests;
+      const lastRequest = requests[requests.length - 1];
+      const item = await lastRequest.item.get();
+      const user = await lastRequest.userRequesting.get();
+      const { details, picture, points, title } = item.data();
+      const { name, points: userPoints } = user.data();
 
-    console.log(`item: ${title}`);
-    console.log(`user: ${name}`);
+      console.log(`item: ${title}`);
+      console.log(`user: ${name}`);
 
-    setReceivedRequestItem({
-      details,
-      picture,
-      points,
-      title,
-      ref: item.ref,
-    });
-    setReceivedRequestUser({ name, points: userPoints, ref: user.ref });
-    showRequestModal(true);
+      setReceivedRequestItem({
+        details,
+        picture,
+        points,
+        title,
+        ref: item.ref,
+      });
+      setReceivedRequestUser({ name, points: userPoints, ref: user.ref });
+      showRequestModal(true);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const followRequests = async () => {
-    const doc = await firebase.firestore().collection("users").doc(uid);
-    doc
-      .onSnapshot(createFnCounter(handleActivitySubsription, 1))
-      .catch((err) => {
-        console.log(`Encountered error: ${err}`);
-      });
+    try {
+      const doc = await firebase.firestore().collection("users").doc(uid);
+      doc.onSnapshot(createFnCounter(handleActivitySubsription, 1));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useFocusEffect(

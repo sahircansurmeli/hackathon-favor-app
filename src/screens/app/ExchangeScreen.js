@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { firebase } from "../../firebase";
 
-import ShadowTab from "../../components/ShadowTab";
 import BackArrow from "../../components/icons/BackArrow";
 
 const MOCK_EXCHANGES = [
@@ -28,12 +27,14 @@ const MOCK_EXCHANGES = [
 
 function Exchange({ item: { takerName, giverName, itemPoints, itemName } }) {
   return (
-    <View style={exchangeStyle.container}>
-      <Text style={exchangeStyle.text}>{itemPoints}</Text>
-      <Text style={exchangeStyle.text}>{takerName}</Text>
-      <BackArrow style={{ transform: [{ rotate: "180deg" }] }} />
-      <Text style={exchangeStyle.text}>{giverName}</Text>
-    </View>
+    <TouchableOpacity>
+      <View style={exchangeStyle.container}>
+        <Text style={exchangeStyle.text}>{itemPoints}</Text>
+        <Text style={exchangeStyle.text}>{takerName}</Text>
+        <BackArrow style={{ transform: [{ rotate: "180deg" }] }} />
+        <Text style={exchangeStyle.text}>{giverName}</Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -74,13 +75,11 @@ const ExchangeScreen = ({ navigation }) => {
         const { name: giverName } = giver.data();
         const { name: takerName } = taker.data();
         const { title, points } = item.data();
-        console.log(`giverName: ${giverName}`);
-        console.log(`title: ${title} points: ${points}`);
         return {
           itemTitle: title,
           giverName,
           takerName,
-          itemPoints: points,
+          itemPoints: points
         };
       });
       Promise.all(transPromises).then((data) => setTransactions(data));
@@ -90,6 +89,25 @@ const ExchangeScreen = ({ navigation }) => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const releasePoints = (takerRef, giverRef, itemRef) => {
+    const item = await itemRef.get();
+    const { points } = item.data();
+
+    giverRef.get().then(snapshot => {
+      let currPoints = snapshot.data().points;
+      currPoints = Number(currPoints);
+      giverRef.update({ points: currPoints + points })
+    }).catch(err => console.error(err)) ;
+
+    takerRef.get().then(snapshot => {
+      let currPoints = snapshot.data().points;
+      currPoints = Number(currPoints);
+      takerRef.update({ points: currPoints - points })
+    }).catch(err => console.error(err));
+
+    console.log("Points released")
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -119,7 +137,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "80%",
     alignItems: "center",
-    // justifyContent: "space-around",
   },
   title: {
     fontFamily: "MontserratSemiBold",
