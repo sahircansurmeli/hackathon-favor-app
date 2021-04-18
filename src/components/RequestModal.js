@@ -6,8 +6,8 @@ import CustomButton from "./CustomButton";
 import CheckIcon from "./icons/CheckIcon";
 
 const RequestModal = ({
-  item: { title, details, points: itemPoints, name: itemName },
-  user: { name: userName, points },
+  item: { title, details, points: itemPoints, name: itemName, ref: itemRef },
+  user: { name: userName, points, ref: userRef },
   visible,
   close,
 }) => {
@@ -17,20 +17,23 @@ const RequestModal = ({
     let currentUser = firebase.auth().currentUser.uid;
     // get reference of current user
     currentUser = firebase.firestore().doc(`users/${currentUser}`);
-    user
-      .get()
-      .then((doc) => {
-        let requests = doc.data().requests || [];
-        if (itemPath !== undefined) {
-          requests.push({
-            item: itemPath,
-            userRequesting: currentUser,
-          });
-        }
-        user.update({ requests });
-        setRequested(true);
+
+    firebase
+      .firestore()
+      .collection("transactions")
+      .add({
+        giver: currentUser,
+        taker: userRef,
+        item: itemRef,
       })
-      .catch((err) => console.error(err));
+      .then(() => {
+        console.log("Transaction added!");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    close();
   };
 
   return (
@@ -46,8 +49,8 @@ const RequestModal = ({
             </View>
             <View style={styles.titleView}>
               <Text style={styles.title}>You have a new request</Text>
-              <Text style={styles.definition}>
-                Learn {title} from a fellow Mason student
+              <Text style={styles.description}>
+                {userName} is requesting {title} which is worth {itemPoints}{" "}
               </Text>
             </View>
             <View style={styles.buttonView}>
@@ -103,18 +106,9 @@ const styles = StyleSheet.create({
     marginTop: "10%",
     marginBottom: "2%",
   },
-  definition: {
-    fontSize: 16,
-    color: "#B4B6B8",
-    marginVertical: "3%",
-  },
-  user: {
-    fontFamily: "Montserrat",
-    fontSize: 16,
-    marginVertical: "3%",
-  },
-  points: {
-    fontSize: 18,
+  description: {
+    fontSize: 21,
+    color: "black",
     marginVertical: "3%",
   },
   buttonView: {
@@ -133,12 +127,6 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     flex: 1,
     width: "100%",
-  },
-  checkImage: {
-    height: 200,
-    width: "100%",
-    resizeMode: "cover",
-    borderRadius: 16,
   },
 });
 

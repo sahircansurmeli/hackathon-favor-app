@@ -128,8 +128,14 @@ export default function HomeScreen({ navigation }) {
         console.log(`item: ${title} ${points}`);
         console.log(`user: ${name} ${userPoints}`);
 
-        setReceivedRequestItem({ details, picture, points, title });
-        setReceivedRequestUser({ name, points: userPoints });
+        setReceivedRequestItem({
+          details,
+          picture,
+          points,
+          title,
+          ref: item.ref,
+        });
+        setReceivedRequestUser({ name, points: userPoints, ref: user.ref });
         showRequestModal(true);
       },
       (err) => {
@@ -137,15 +143,6 @@ export default function HomeScreen({ navigation }) {
       }
     );
   };
-
-  useEffect(() => {
-    console.log("receivedRequestItem");
-    console.log(receivedRequestItem);
-    console.log("receivedRequestUser");
-    console.log(receivedRequestUser);
-    console.log("requestModal");
-    console.log(requestModal);
-  }, [receivedRequestItem, receivedRequestUser, requestModal]);
 
   useEffect(() => {
     getBooks();
