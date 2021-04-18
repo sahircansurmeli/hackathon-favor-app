@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Dimensions,
 } from "react-native";
 import DetailModal from "../../components/DetailModal";
 import { firebase } from "../../firebase";
@@ -16,6 +17,7 @@ import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
 import AddIcon from "../../components/icons/AddIcon";
 import PointsIcon from "../../components/icons/PointsIcon";
+import RequestModal from "../../components/RequestModal";
 
 const Card = ({ item }) => {
   const [modal, showModal] = useState(false);
@@ -61,6 +63,12 @@ export default function HomeScreen({ navigation }) {
   const [books, setBooks] = useState([]);
   const [skills, setSkills] = useState([]);
   const [points, setPoints] = useState(0);
+  const [requestModal, showRequestModal] = useState(false);
+  const uid = firebase.auth().currentUser.uid;
+
+  const [receivedRequestItem, setReceivedRequestItem] = useState({});
+  const [receivedRequestUser, setReceivedRequestUser] = useState({});
+
   const extractUsername = async (userCollection) => {
     const user = await userCollection.get();
     const name = await user.data().name;
@@ -109,11 +117,42 @@ export default function HomeScreen({ navigation }) {
   };
 
   const getPoints = async () => {
-    const uid = firebase.auth().currentUser.uid;
     const data = await firebase.firestore().collection("users").doc(uid).get();
     const points = data.data().points;
     setPoints(points);
   };
+
+  const followRequests = async () => {
+    const doc = await firebase.firestore().collection("users").doc(uid);
+    const observer = doc.onSnapshot(
+      async (docSnapshot) => {
+        const lastRequest = docSnapshot.data().requests[0];
+        const item = await lastRequest.item.get();
+        const user = await lastRequest.userRequesting.get();
+        const { details, picture, points, title } = item.data();
+        const { name, points: userPoints } = user.data();
+
+        console.log(`item: ${title} ${points}`);
+        console.log(`user: ${name} ${userPoints}`);
+
+        setReceivedRequestItem({ details, picture, points, title });
+        setReceivedRequestUser({ name, points: userPoints });
+        showRequestModal(true);
+      },
+      (err) => {
+        console.log(`Encountered error: ${err}`);
+      }
+    );
+  };
+
+  useEffect(() => {
+    console.log("receivedRequestItem");
+    console.log(receivedRequestItem);
+    console.log("receivedRequestUser");
+    console.log(receivedRequestUser);
+    console.log("requestModal");
+    console.log(requestModal);
+  }, [receivedRequestItem, receivedRequestUser, requestModal]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -122,6 +161,7 @@ export default function HomeScreen({ navigation }) {
       getPoints();
     }, [])
   );
+
 
   const renderCard = ({ item }) => <Card item={item} />;
 
@@ -167,6 +207,17 @@ export default function HomeScreen({ navigation }) {
             horizontal
           />
         </View>
+      </View>
+      <View style={styles.lowerView}>
+        <TouchableOpacity style={styles.requestsButton}>
+          <Text style={styles.requestsText}>REQUESTS</Text>
+        </TouchableOpacity>
+        <RequestModal
+          visible={requestModal}
+          item={receivedRequestItem}
+          user={receivedRequestUser}
+          close={() => showRequestModal(false)}
+        />
       </View>
     </SafeAreaView>
   );
@@ -246,6 +297,18 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratMedium",
     fontSize: 20,
     marginLeft: "5%",
+  },
+  lowerView: {
+    flex: 1,
+  },
+  requestsButton: {
+    backgroundColor: "#FFFA",
+  },
+  requestsText: {
+    fontFamily: "Montserrat",
+    width: Dimensions.get("window").width * 0.4,
+    paddingVertical: "3%",
+    textAlign: "center",
   },
   list: {
     // backgroundColor: "red"

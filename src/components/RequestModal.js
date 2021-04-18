@@ -5,14 +5,15 @@ import { firebase } from "../firebase";
 import CustomButton from "./CustomButton";
 import CheckIcon from "./icons/CheckIcon";
 
-const DetailModal = ({
-  item: { title, details, points, name, user, itemPath },
+const RequestModal = ({
+  item: { title, details, points: itemPoints, name: itemName },
+  user: { name: userName, points },
   visible,
   close,
 }) => {
   const [requested, setRequested] = useState(false);
 
-  const request = async () => {
+  const accept = async () => {
     let currentUser = firebase.auth().currentUser.uid;
     // get reference of current user
     currentUser = firebase.firestore().doc(`users/${currentUser}`);
@@ -36,58 +37,34 @@ const DetailModal = ({
     <Modal transparent={true} animationType="fade" visible={visible}>
       <View style={styles.modalBackground}>
         <View style={styles.modalCard}>
-          {requested ? (
-            <Fragment>
-              <View style={styles.imageView}>
-                <Image
-                  source={require("../../assets/check.png")}
-                  style={styles.checkImage}
-                />
-              </View>
-              <View style={styles.titleView}>
-                <Text style={styles.title}>Requested</Text>
-              </View>
-              <View style={styles.buttonView}>
-                <CustomButton
-                  color="#bdbdbd"
-                  style={styles.modalButton}
-                  text="Dismiss"
-                  onPress={close}
-                />
-              </View>
-            </Fragment>
-          ) : (
-            <Fragment>
-              <View style={styles.imageView}>
-                <Image
-                  source={require("../../assets/skateboard.jpeg")}
-                  style={styles.image}
-                />
-              </View>
-              <View style={styles.titleView}>
-                <Text style={styles.title}>{title}</Text>
-                <Text style={styles.definition}>
-                  {details}
-                </Text>
-                <Text style={styles.user}>by {name}</Text>
-                <Text style={styles.points}>{points} PTS</Text>
-              </View>
-              <View style={styles.buttonView}>
-                <CustomButton
-                  color="#bdbdbd"
-                  style={styles.modalButton}
-                  text="Cancel"
-                  onPress={close}
-                />
-                <CustomButton
-                  color="#56ccf2"
-                  style={styles.modalButton}
-                  text="Request"
-                  onPress={request}
-                />
-              </View>
-            </Fragment>
-          )}
+          <Fragment>
+            <View style={styles.imageView}>
+              <Image
+                source={require("../../assets/skateboard.jpeg")}
+                style={styles.image}
+              />
+            </View>
+            <View style={styles.titleView}>
+              <Text style={styles.title}>You have a new request</Text>
+              <Text style={styles.definition}>
+                Learn {title} from a fellow Mason student
+              </Text>
+            </View>
+            <View style={styles.buttonView}>
+              <CustomButton
+                color="#bdbdbd"
+                style={styles.modalButton}
+                text="Reject"
+                onPress={close}
+              />
+              <CustomButton
+                color="#56ccf2"
+                style={styles.modalButton}
+                text="Accept"
+                onPress={accept}
+              />
+            </View>
+          </Fragment>
         </View>
       </View>
     </Modal>
@@ -165,4 +142,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DetailModal;
+export default RequestModal;
