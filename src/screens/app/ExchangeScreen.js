@@ -10,26 +10,29 @@ const MOCK_EXCHANGES = [
     requester: "enes",
     recepient: "kaan",
     points: 125,
+    id: 1,
   },
   {
     requester: "sahircan",
     recepient: "jeong",
     points: 234,
+    id: 2,
   },
   {
     requester: "enes",
     recepient: "jeong",
     points: 12,
+    id: 3,
   },
 ];
 
-function Exchange({ item: { requester, recepient, points } }) {
+function Exchange({ item: { takerName, giverName, itemPoints, itemName } }) {
   return (
     <View style={exchangeStyle.container}>
-      <Text style={exchangeStyle.text}>{points}</Text>
-      <Text style={exchangeStyle.text}>{requester}</Text>
+      <Text style={exchangeStyle.text}>{itemPoints}</Text>
+      <Text style={exchangeStyle.text}>{takerName}</Text>
       <BackArrow style={{ transform: [{ rotate: "180deg" }] }} />
-      <Text style={exchangeStyle.text}>{recepient}</Text>
+      <Text style={exchangeStyle.text}>{giverName}</Text>
     </View>
   );
 }
@@ -53,24 +56,39 @@ const exchangeStyle = StyleSheet.create({
 });
 
 const ExchangeScreen = ({ navigation }) => {
-  const [name, setName] = useState("Loading");
-  const [points, setPoints] = useState(0);
+  const [transactions, setTransactions] = useState([]);
 
-  const grabUser = async () => {
+  const fetchData = async () => {
+    const tempArr = [];
     const uid = firebase.auth()?.currentUser?.uid;
     if (uid) {
-      const user = await firebase
+      const transactionSnapshot = await firebase
         .firestore()
-        .collection("users")
-        .doc(uid)
+        .collection("transactions")
         .get();
-      setName(user.data().name);
-      setPoints(user.data().points);
+      const transPromises = transactionSnapshot.docs.map(async (doc) => {
+        const data = doc.data();
+        const giver = await data.giver.get();
+        const taker = await data.taker.get();
+        const item = await data.item.get();
+        const { name: giverName } = giver.data();
+        const { name: takerName } = taker.data();
+        const { title, points } = item.data();
+        console.log(`giverName: ${giverName}`);
+        console.log(`title: ${title} points: ${points}`);
+        return {
+          itemTitle: title,
+          giverName,
+          takerName,
+          itemPoints: points,
+        };
+      });
+      Promise.all(transPromises).then((data) => setTransactions(data));
     }
   };
 
   useEffect(() => {
-    grabUser();
+    fetchData();
   }, []);
 
   return (
@@ -80,7 +98,7 @@ const ExchangeScreen = ({ navigation }) => {
         <Text style={styles.title}>Exchanges</Text>
       </View>
       <FlatList
-        data={MOCK_EXCHANGES}
+        data={transactions}
         renderItem={Exchange}
         keyExtractor={(item) => item.id}
         style={styles.body}

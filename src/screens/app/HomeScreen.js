@@ -75,7 +75,6 @@ const Card = ({ item }) => {
 // given function will be called after invokeBeforeExecution counter is
 function createFnCounter(fn, invokeBeforeExecution) {
   let count = 0;
-  console.log(`count ${count}`);
   return (snapshot) => {
     count++;
     if (count <= invokeBeforeExecution) {
@@ -242,7 +241,10 @@ export default function HomeScreen({ navigation }) {
         </View>
       </View>
       <View style={styles.lowerView}>
-        <TouchableOpacity style={styles.requestsButton}>
+        <TouchableOpacity
+          style={styles.requestsButton}
+          onPress={() => navigation.navigate("Exchanges")}
+        >
           <Text style={styles.requestsText}>REQUESTS</Text>
         </TouchableOpacity>
         <RequestModal
