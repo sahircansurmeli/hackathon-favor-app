@@ -13,7 +13,7 @@ LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const Stack = createStackNavigator();
 
-export default function AuthContainer() {
+export default function AppContainer() {
   return (
     <Stack.Navigator
       initialRouteName="Home"
@@ -25,7 +25,7 @@ export default function AuthContainer() {
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+      <Stack.Screen name="Leaderboard" component={LeaderboardScreen} options={{ headerLeft: () => null, }} />
       <Stack.Screen name="AddBook" component={AddBook} />
       <Stack.Screen name="AddSkill" component={AddSkill} />
       <Stack.Screen name="Exchanges" component={ExchangeScreen} />

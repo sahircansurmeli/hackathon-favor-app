@@ -14,6 +14,8 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import SearchIcon from "../../components/icons/SearchIcon";
 import { useNavigation } from "@react-navigation/core";
 
+import BackArrowIcon from "../../components/icons/BackArrowIcon";
+
 function leaderboardItem({ item }) {
   return (
     <View style={leaderboardStyles.container}>
@@ -105,9 +107,9 @@ const tabBar = StyleSheet.create({
   },
 });
 
-export default function LeaderboardScreen() {
+export default function LeaderboardScreen({ navigation }) {
   const layout = useWindowDimensions();
-  const navigator = useNavigation();
+  // const navigator = useNavigation();
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
@@ -120,6 +122,7 @@ export default function LeaderboardScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
+        <BackArrowIcon onPress={() => navigation.goBack()} />
         <Text style={styles.header}>LEADERBOARD</Text>
         <SearchIcon onPress={() => console.log("Leaderboard")} />
       </View>
