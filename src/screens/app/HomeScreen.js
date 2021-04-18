@@ -7,27 +7,47 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Dimensions,
 } from "react-native";
 import DetailModal from "../../components/DetailModal";
 import { firebase } from "../../firebase";
+import { useFocusEffect } from "@react-navigation/native";
 
 import LeaderboardIcon from "../../components/icons/LeaderboardIcon";
 import ProfileIcon from "../../components/icons/ProfileIcon";
 import AddIcon from "../../components/icons/AddIcon";
 import PointsIcon from "../../components/icons/PointsIcon";
+import RequestModal from "../../components/RequestModal";
 
 const Card = ({ item }) => {
   const [modal, showModal] = useState(false);
   const [pictureUrl, setPictureUrl] = useState("");
+  const [isPictureReady, setIsPictureReady] = useState(false);
 
   React.useEffect(() => {
-    firebase.storage().ref(item.picture).getDownloadURL().then(setPictureUrl);
+    firebase
+      .storage()
+      .ref(item.id + ".jpg")
+      .getDownloadURL()
+      .then(setPictureUrl)
+      .catch((err) => {
+        if (err.code === "storage/object-not-found") {
+          setPictureUrl("");
+        }
+      });
   }, [item.id]);
+
+  React.useEffect(() => {
+    if (pictureUrl) {
+      console.log("prefetch");
+      Image.prefetch(pictureUrl).then(setIsPictureReady);
+    }
+  }, [pictureUrl]);
 
   return (
     <TouchableOpacity onPress={() => showModal(true)}>
       <View style={styles.card}>
-        {pictureUrl ? (
+        {pictureUrl && isPictureReady ? (
           <Image
             source={{ uri: pictureUrl }}
             style={{
@@ -44,16 +64,40 @@ const Card = ({ item }) => {
           visible={modal}
           item={item}
           close={() => showModal(false)}
+          pictureUrl={pictureUrl}
+          isPictureReady={isPictureReady}
         />
       </View>
     </TouchableOpacity>
   );
 };
 
+// given function will be called after invokeBeforeExecution counter is
+function createFnCounter(fn, invokeBeforeExecution) {
+  let count = 0;
+  console.log(`count ${count}`);
+  return (snapshot) => {
+    count++;
+    if (count <= invokeBeforeExecution) {
+      return null;
+    }
+
+    return fn(snapshot, count);
+  };
+}
+
 export default function HomeScreen({ navigation }) {
   const [books, setBooks] = useState([]);
   const [skills, setSkills] = useState([]);
   const [points, setPoints] = useState(0);
+  const [requestModal, showRequestModal] = useState(false);
+  const [isInitialFetch, setIsInitialFetch] = useState(true);
+
+  const uid = firebase.auth().currentUser.uid;
+
+  const [receivedRequestItem, setReceivedRequestItem] = useState({});
+  const [receivedRequestUser, setReceivedRequestUser] = useState({});
+
   const extractUsername = async (userCollection) => {
     const user = await userCollection.get();
     const name = await user.data().name;
@@ -101,18 +145,56 @@ export default function HomeScreen({ navigation }) {
       .catch((err) => console.log("Error retrieving skills", err));
   };
 
+  useEffect(() => {
+    console.log("===================");
+    console.log(isInitialFetch);
+  }, [isInitialFetch]);
+
   const getPoints = async () => {
-    const uid = firebase.auth().currentUser.uid;
     const data = await firebase.firestore().collection("users").doc(uid).get();
     const points = data.data().points;
     setPoints(points);
   };
 
-  useEffect(() => {
-    getBooks();
-    getSkills();
-    getPoints();
-  }, []);
+  const handleActivitySubsription = async (snapshot) => {
+    const requests = snapshot.data().requests;
+    const lastRequest = requests[requests.length - 1];
+    const item = await lastRequest.item.get();
+    const user = await lastRequest.userRequesting.get();
+    const { details, picture, points, title } = item.data();
+    const { name, points: userPoints } = user.data();
+
+    console.log(`item: ${title}`);
+    console.log(`user: ${name}`);
+
+    setReceivedRequestItem({
+      details,
+      picture,
+      points,
+      title,
+      ref: item.ref,
+    });
+    setReceivedRequestUser({ name, points: userPoints, ref: user.ref });
+    showRequestModal(true);
+  };
+
+  const followRequests = async () => {
+    const doc = await firebase.firestore().collection("users").doc(uid);
+    doc
+      .onSnapshot(createFnCounter(handleActivitySubsription, 1))
+      .catch((err) => {
+        console.log(`Encountered error: ${err}`);
+      });
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getBooks();
+      getSkills();
+      getPoints();
+      followRequests();
+    }, [])
+  );
 
   const renderCard = ({ item }) => <Card item={item} />;
 
@@ -158,6 +240,17 @@ export default function HomeScreen({ navigation }) {
             horizontal
           />
         </View>
+      </View>
+      <View style={styles.lowerView}>
+        <TouchableOpacity style={styles.requestsButton}>
+          <Text style={styles.requestsText}>REQUESTS</Text>
+        </TouchableOpacity>
+        <RequestModal
+          visible={requestModal}
+          item={receivedRequestItem}
+          user={receivedRequestUser}
+          close={() => showRequestModal(false)}
+        />
       </View>
     </SafeAreaView>
   );
@@ -237,6 +330,18 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratMedium",
     fontSize: 20,
     marginLeft: "5%",
+  },
+  lowerView: {
+    flex: 1,
+  },
+  requestsButton: {
+    backgroundColor: "#FFFA",
+  },
+  requestsText: {
+    fontFamily: "Montserrat",
+    width: Dimensions.get("window").width * 0.4,
+    paddingVertical: "3%",
+    textAlign: "center",
   },
   list: {
     // backgroundColor: "red"

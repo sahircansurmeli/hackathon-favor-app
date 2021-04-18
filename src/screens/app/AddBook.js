@@ -14,12 +14,11 @@ import {
   Image
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
-import { useFocusEffect } from "@react-navigation/native";
 
 import { firebase } from "../../firebase";
 import CustomButton from "../../components/CustomButton";
-import BackArrowIcon from "../../components/icons/BackArrowIcon";
-
+import CameraButton from "../../components/CameraButton";
+import CameraRollButton from "../../components/CameraRollButton";
 
 const AddBook = ({ navigation }) => {
   const [title, setTitle] = useState("");
@@ -75,6 +74,51 @@ const AddBook = ({ navigation }) => {
     }
   }
 
+  const uriToBlob = (uri) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        // return the blob
+        resolve(xhr.response);
+      };
+
+      xhr.onerror = function () {
+        // something went wrong
+        reject(new Error('uriToBlob failed'));
+      };
+      // this helps us get a blob
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+
+      xhr.send(null);
+    });
+  }
+
+  const uploadToFirebase = (blob, id) => {
+    return new Promise((resolve, reject) => {
+      var storageRef = firebase.storage().ref();
+      storageRef.child(`${id}.jpg`).put(blob, {
+        contentType: 'image/jpeg'
+      }).then((snapshot) => {
+        blob.close();
+        resolve(snapshot);
+      }).catch((error) => {
+        reject(error);
+      });
+    });
+  }
+
+  const uploadImg = async (id) => {
+    try {
+      const blob = await uriToBlob(image);
+      const snapshot = await uploadToFirebase(blob, id);
+      return snapshot;
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
   const Post = async () => {
     firebase
       .firestore()
@@ -83,10 +127,12 @@ const AddBook = ({ navigation }) => {
         title: title,
         details: details,
         points: Number(points),
-        picture: "KR.jpg",
         user: firebase
           .firestore()
           .doc("users/" + firebase.auth().currentUser.uid),
+      })
+      .then((doc) => {
+        return uploadImg(doc.id);
       })
       .then(() => {
         console.log("Book added!");
@@ -110,7 +156,6 @@ const AddBook = ({ navigation }) => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView style={styles.container}>
           <View style={styles.headerView}>
-            <BackArrowIcon onPress={() => navigation.goBack()} />
             <Text style={styles.header}>Add New Book</Text>
           </View>
           <View style={styles.inputView}>
@@ -133,8 +178,12 @@ const AddBook = ({ navigation }) => {
               value={points}
               keyboardType="numeric"
             ></TextInput>
-            <Button title="Pick an image from media library" onPress={pickImageMediaLibrary} />
-            <Button title="Take a photo from the camera" onPress={pickImageCamera} />
+            <View style={styles.imageButtonView}>
+              <CameraButton onPress={pickImageCamera} />
+              <CameraRollButton onPress={pickImageMediaLibrary} />
+            </View>
+            {/* <Button title="Pick an image from library" onPress={pickImageMediaLibrary} /> */}
+            {/* <Button title="Take a photo from the camera" onPress={pickImageCamera} /> */}
             {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </View>
           <View style={styles.buttonView}>
@@ -210,6 +259,12 @@ const styles = StyleSheet.create({
     marginHorizontal: "3%",
     marginBottom: "5%",
   },
+  imageButtonView: {
+    marginTop: "10%",
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+  }
 });
 
 export default AddBook;

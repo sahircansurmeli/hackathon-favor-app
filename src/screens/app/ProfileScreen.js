@@ -10,7 +10,6 @@ import {
 import { firebase } from "../../firebase";
 
 import ShadowTab from "../../components/ShadowTab";
-import BackArrow from "../../components/icons/BackArrow";
 
 const ProfileScreen = ({ navigation }) => {
   const [name, setName] = useState("Loading");
@@ -36,7 +35,6 @@ const ProfileScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
-        <BackArrow onPress={() => navigation.goBack()} />
       </View>
       <View style={styles.titleView}>
         <Text style={styles.title}>Profile</Text>

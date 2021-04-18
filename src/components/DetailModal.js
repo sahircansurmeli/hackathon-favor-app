@@ -9,6 +9,8 @@ const DetailModal = ({
   item: { title, details, points, name, user, itemPath },
   visible,
   close,
+  pictureUrl,
+  isPictureReady
 }) => {
   const [requested, setRequested] = useState(false);
 
@@ -59,15 +61,19 @@ const DetailModal = ({
           ) : (
             <Fragment>
               <View style={styles.imageView}>
-                <Image
-                  source={require("../../assets/skateboard.jpeg")}
-                  style={styles.image}
-                />
+                {
+                  isPictureReady && (
+                    <Image
+                      source={{ uri: pictureUrl }}
+                      style={styles.image}
+                    />
+                  )
+                }
               </View>
               <View style={styles.titleView}>
-                <Text style={styles.title}>{title} Class</Text>
+                <Text style={styles.title}>{title}</Text>
                 <Text style={styles.definition}>
-                  Learn {title} from a fellow Mason student
+                  {details}
                 </Text>
                 <Text style={styles.user}>by {name}</Text>
                 <Text style={styles.points}>{points} PTS</Text>
@@ -116,6 +122,7 @@ const styles = StyleSheet.create({
   image: {
     resizeMode: "cover",
     width: "100%",
+    height: 200,
     borderTopRightRadius: 16,
     borderTopLeftRadius: 16,
   },

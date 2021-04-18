@@ -22,7 +22,7 @@ const ShadowTab = (props) => {
 const styles = StyleSheet.create({
   container: {
     marginVertical: "3%",
-    borderRadius: 3,
+    borderRadius: 5,
     borderColor: "black",
     shadowRadius: 2,
     shadowColor: "#0000000A",
