@@ -4,7 +4,7 @@
 <p align="center">
   
   <a href="https://github.com/sahircansurmeli/hackathon-favor-app">
-    <img src="images/logo_original.png" alt="Logo">
+    <img src="img/Logo.png" alt="Logo">
   </a>
 
   <h3 align="center">Favorr</h3>
@@ -15,7 +15,7 @@
     <a href="https://github.com/sahircansurmeli/hackathon-favor-app"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://www.youtube.com/watch?v=dB-69tWjUGs">View Demo(Youtube)</a>
+    <a href="https://www.youtube.com/watch?v=VBx1oW_mMp0">View Demo(Youtube)</a>
     ·
     <a href="https://github.com/sahircansurmeli/hackathon-favor-app/issues">Report Bug</a>
     ·
@@ -32,7 +32,7 @@ Favorr aims at developing the solidarity of college communities by giving them a
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src="images/phonescreens.png" alt="PhoneScreens" max-width:50 max-height:50>
+<img src="img/app_view.png" alt="PhoneScreens" max-width:50 max-height:50>
 
 ### Inspiration
   
