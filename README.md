@@ -112,7 +112,7 @@ You may find more details on our Devpost, too!
 Please, show us some love💕 on our Devpost! 
 
 We are also the winner of PartiorHack2021 ! 
-<img src="img/patriothack.png" width="600" height="600" alt="winner">
+<img src="img/patriothack.png" width="1200" height="500" alt="winner">
 
 <!-- CONTACT -->
 ## Contact
