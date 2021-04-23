@@ -4,7 +4,7 @@
 <p align="center">
   
   <a href="https://github.com/sahircansurmeli/hackathon-favor-app">
-    <img src="img/Logo.png" alt="Logo">
+    <img src="img/Logo.png" width="300" height="300" alt="Logo">
   </a>
 
   <h3 align="center">Favorr</h3>
@@ -110,6 +110,8 @@ Contributions are what make the open source community such an amazing place to b
 You may find more details on our Devpost, too!
 
 Please, show us some love💕 on our Devpost! 
+
+We are also the winner of PartiorHack2021 ! 
 
 
 <!-- CONTACT -->
