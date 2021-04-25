@@ -123,7 +123,7 @@ Jeong Min Cho [@E2Slayer](https://e2slayer.github.io/)
 
 Enes Tasbasi [@etasbasi](http://etasbasi.com)
 
-Kaan Turkmen [@sahircansurmeli](https://github.com/turkmenkaan)
+Kaan Turkmen [@turkmenkaan](https://github.com/turkmenkaan)
 
 <!-- LICENSE -->
 ## License
